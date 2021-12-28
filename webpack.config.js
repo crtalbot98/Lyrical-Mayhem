@@ -5,16 +5,13 @@ const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: './build/app.js',
+  mode: 'development',
+  devtool: false,
   plugins: [
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Lyrical Mayhem'
-    }),
-    // new CopyPlugin({
-    //     patterns: [
-    //         { from: 'src/assets', to: 'assets' },
-    //     ]
-    // })
+    })
   ],
   output: {
     filename: 'app.js',
