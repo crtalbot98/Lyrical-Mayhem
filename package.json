@@ -1,0 +1,29 @@
+{
+  "name": "lyrical_mayhem",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "start": "webpack serve",
+    "ts-build": "tsc -p ."
+  },
+  "author": "Chandler Talbot (https://github.com/crtalbot98)",
+  "license": "ISC",
+  "dependencies": {
+    "brfs": "^1.4.1",
+    "json-loader": "^0.5.4",
+    "pixi.js": "^3.0.8",
+    "transform-loader": "^0.2.3",
+    "typescript": "^4.5.4"
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^10.2.0",
+    "html-webpack-plugin": "^5.5.0",
+    "webpack": "^5.65.0",
+    "webpack-cli": "^4.9.1",
+    "webpack-dev-server": "^4.7.1"
+  }
+}
