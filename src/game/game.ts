@@ -1,25 +1,25 @@
 import * as PIXI from 'pixi.js';
-import Player from './entities/player';
-
+import PlayerController from './controller';
 export default class Game {
 
     private _app: any;
-    private _player: Player;
+    private _Controller: PlayerController;
+    private _gameSpeed: number = 8;
 
     constructor(){
         this._app = new PIXI.Application({ 
             resizeTo: window,
             backgroundColor: 0x1099bb
         });
-        this._player = new Player;
+        this._Controller = new PlayerController(this._gameSpeed);
     }
 
     public init(): void {
         document.body.appendChild(this._app.view);
 
-        this._app.stage.addChild(this._player.init());
+        this._Controller.initListeners();
 
-        this._player.allowMovement();
+        this._app.stage.addChild(this._Controller.player.entity);
 
         this._app.ticker.add((delta: any) => {
             this.update()
@@ -27,6 +27,6 @@ export default class Game {
     }
 
     public update(): void {
-        this._player.update()
+        this._Controller.update();
     }
 }

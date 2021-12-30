@@ -6,3 +6,10 @@ export function genPosition(): Position {
         y: 0
     }
 }
+
+export function calcYawFromPosition(p1: Position, p2: Position): number {
+    const dx: number = p2.x = p1.x;
+    const dy: number = p2.y - p1.y;
+
+    return Math.atan2(dy, dx)
+}
