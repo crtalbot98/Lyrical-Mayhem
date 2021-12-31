@@ -1,9 +1,10 @@
 import * as PIXI from 'pixi.js';
 import PlayerController from './controller';
+import Player from './entities/player';
 export default class Game {
 
     private _app: any;
-    private _Controller: PlayerController;
+    private _player: Player;
     private _gameSpeed: number = 8;
 
     constructor(){
@@ -11,15 +12,15 @@ export default class Game {
             resizeTo: window,
             backgroundColor: 0x1099bb
         });
-        this._Controller = new PlayerController(this._gameSpeed);
+        this._player = new Player(this._gameSpeed);
     }
 
     public init(): void {
         document.body.appendChild(this._app.view);
 
-        this._Controller.initListeners();
+        this._player.create();
 
-        this._app.stage.addChild(this._Controller.player.entity);
+        this._app.stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: any) => {
             this.update()
@@ -27,6 +28,6 @@ export default class Game {
     }
 
     public update(): void {
-        this._Controller.update();
+        this._player.update();
     }
 }

@@ -1,41 +1,43 @@
+import { Graphics } from "pixi.js";
 import { ControllerKeys, ControllerHandler } from "src/types";
+import { increaseVelocityToMax } from "../utils/positions";
 import Player from "./entities/player";
 
 export default class PlayerController {
     
     private _keys: ControllerKeys;
-    private _gameSpeed: number;
-    private _player: Player;
+    private _velocity: number = 1;
+    private _acceleration: number = 0.20;
+    private _maxVelocity: number = 8;
 
-    constructor(speed: number) {
-        this._gameSpeed = speed;
-
-        this._player = new Player();
-        this._player.create();
-
+    constructor(gameSpeed: number) {
         this._keys = {
             'w': {
                 pressed: false,
-                func: () => {
-                    this.moveUp()
+                func: (player: Graphics) => {
+                    this._velocity = increaseVelocityToMax(this._velocity, this._acceleration, this._maxVelocity);
+                    player.position.y -= this._velocity
                 }
             },
             'a': {
                 pressed: false,
-                func: () => {
-                    this.moveLeft()
+                func: (player: Graphics) => {
+                    this._velocity = increaseVelocityToMax(this._velocity, this._acceleration, this._maxVelocity);
+                    player.position.x -= this._velocity
                 }
             },
             's': {
                 pressed: false,
-                func: () => {
-                    this.moveDown()
+                func: (player: Graphics) => {
+                    this._velocity = increaseVelocityToMax(this._velocity, this._acceleration, this._maxVelocity);
+                    player.position.y += this._velocity
                 }
             },
             'd': {
                 pressed: false,
-                func: () => {
-                    this.moveRight()
+                func: (player: Graphics) => {
+                    this._velocity = increaseVelocityToMax(this._velocity, this._acceleration, this._maxVelocity);
+                    player.position.x += this._velocity
                 }
             }
         };
@@ -53,35 +55,11 @@ export default class PlayerController {
         })
     }
 
-    private moveUp() {
-        this._player.entity.position.y -= this._gameSpeed
-    }
-
-    private moveDown() {
-        this._player.entity.position.y += this._gameSpeed
-    }
-
-    private moveLeft() {
-        this._player.entity.position.x -= this._gameSpeed
-    }
-
-    private moveRight() {
-        this._player.entity.position.x += this._gameSpeed
+    public resetVelocity(): void {
+        this._velocity = 1;
     }
 
     get keys(): ControllerKeys {
         return this._keys
-    }
-
-    get player(): Player {
-        return this._player
-    }
-
-    public update(): void {
-        this._player.update()
-
-        for(const [key, value] of Object.entries(this._keys)) {
-            if(value.pressed) this._keys[key].func()
-        };
     }
 }

@@ -13,3 +13,7 @@ export function calcYawFromPosition(p1: Position, p2: Position): number {
 
     return Math.atan2(dy, dx)
 }
+
+export function increaseVelocityToMax(velocity: number, acceleration: number, maxVelocity: number) {
+    return velocity <= maxVelocity ? velocity += acceleration : maxVelocity
+}
