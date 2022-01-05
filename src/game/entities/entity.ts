@@ -4,23 +4,26 @@ import { genPosition } from '../../utils/positions';
 
 export default abstract class Entity {
     protected _initialPosition: Position;
-    protected _speed: number;
+    protected _velocity: number = 0;
     protected _entity: any;
     public _color: number;
     public _size: Size;
 
-    constructor(pos: Position, color: number, size: Size, speed: number) {
+    constructor(pos: Position, color: number, size: Size) {
         this._initialPosition = pos || genPosition();
         this._color = color || 0xff0000;
         this._size = size;
-        this._speed = speed
     }
 
-    set position(pos: Position) {
-        this._entity.position.set(pos.x, pos.y)
+    set initialPosition(pos: Position) {
+        this._initialPosition = pos
     }
 
     get entity(): any {
         return this._entity
+    }
+
+    get size(): Size {
+        return this._size
     }
 }

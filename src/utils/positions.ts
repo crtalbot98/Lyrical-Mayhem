@@ -1,4 +1,4 @@
-import { Position } from "src/types";
+import { Position, Size } from "src/types";
 
 export function genPosition(): Position {
     return {
@@ -7,13 +7,27 @@ export function genPosition(): Position {
     }
 }
 
-export function calcYawFromPosition(p1: Position, p2: Position): number {
-    const dx: number = p2.x = p1.x;
+export function angleBetweenTwoPoints(p1: Position, p2: Position): number {
+    const dx: number = p2.x - p1.x;
     const dy: number = p2.y - p1.y;
 
-    return Math.atan2(dy, dx)
+    return (Math.atan2(dy, dx) * 180) / Math.PI
 }
 
-export function increaseVelocityToMax(velocity: number, acceleration: number, maxVelocity: number) {
+export function distanceBetweenTwoPoints(p1: Position, p2: Position): number {
+    const dx: number = p2.x - p1.x;
+    const dy: number = p2.y - p1.y;
+
+    return Math.sqrt(dx * dx + dy * dy)
+}
+
+export function accelerateToMax(velocity: number, acceleration: number, maxVelocity: number): number {
     return velocity <= maxVelocity ? velocity += acceleration : maxVelocity
+}
+
+export function spriteCenterPosition(position: Position, size: Size): Position {
+    return {
+        x: position.x + size.w / 2,
+        y: position.y + size.h / 2
+    }
 }
