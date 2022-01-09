@@ -16,3 +16,8 @@ export type ControllerHandler = {
     pressed: boolean,
     func: any
 }
+
+export type Velocity = {
+    x: number,
+    y: number
+}

@@ -1,54 +1,76 @@
 import { Graphics } from "pixi.js";
-import { ControllerKeys, ControllerHandler } from "src/types";
-import { accelerateToMax } from "../utils/positions";
-import Player from "./entities/player";
+import { ControllerKeys, Velocity } from "src/types";
+import Vector2D from "./vector2D";
 
-export default class PlayerController {
+export default class Controller {
     
     private _keys: ControllerKeys;
+    private _maxVelocity: number = 5;
+    private _deceleration: number = 0.95;
+    protected _velocity: number = 0;
+    private _acceleration: number = 0.5;
+    private _dirVector: Vector2D = new Vector2D(0,0);
 
     constructor() {
         this._keys = {
             'w': {
                 pressed: false,
-                func: (player: Graphics, velocity: number, delta: number) => {
-                    player.position.y -= velocity * delta
+                func: () => {
+                    this._dirVector.y -= 1
                 }
             },
             'a': {
                 pressed: false,
-                func: (player: Graphics, velocity: number, delta: number) => {
-                    player.position.x -= velocity * delta
+                func: () => {
+                    this._dirVector.x -= 1
                 }
             },
             's': {
                 pressed: false,
-                func: (player: Graphics, velocity: number, delta: number) => {
-                    player.position.y += velocity * delta
+                func: () => {
+                    this._dirVector.y += 1
                 }
             },
             'd': {
                 pressed: false,
-                func: (player: Graphics, velocity: number, delta: number) => {
-                    player.position.x += velocity * delta
+                func: () => {
+                    this._dirVector.x += 1
                 }
             }
+        }
+    }
+
+    public update(entity: Graphics, delta: number): void {
+        this._dirVector.normalize();
+
+        for(const [key, value] of Object.entries(this._keys)) {
+            if(value.pressed){ 
+                this._velocity = Math.min(this._maxVelocity, this._velocity += this._acceleration) * delta;
+                this._keys[key].func();
+            }
         };
+
+        const angle = this._dirVector.direction();
+        entity.position.x += (this._velocity * Math.sin(angle)) * delta;
+        entity.position.y += (this._velocity * Math.cos(angle)) * delta;
+
+        this._velocity *= this._deceleration * delta
+
+        // entity.pivot.set(entity.position.x + entity.getBounds().width / 2, entity.getBounds().height / 2);
+        // entity.rotation = angle;
     }
 
     public initListeners(): void {
         document.addEventListener('keydown', (evt: KeyboardEvent) => {
             evt.preventDefault();
-            if(this._keys[evt.key]) this._keys[evt.key].pressed = true;
+            if(this._keys[evt.key]){
+                this._keys[evt.key].pressed = true
+            }
         });
 
         document.addEventListener('keyup', (evt: KeyboardEvent) => {
             evt.preventDefault();
-            if(this._keys[evt.key]) this._keys[evt.key].pressed = false;
+            if(this._keys[evt.key]) this._keys[evt.key].pressed = false
         })
-    }
-
-    get keys(): ControllerKeys {
-        return this._keys
     }
 }

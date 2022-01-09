@@ -21,8 +21,12 @@ export function distanceBetweenTwoPoints(p1: Position, p2: Position): number {
     return Math.sqrt(dx * dx + dy * dy)
 }
 
-export function accelerateToMax(velocity: number, acceleration: number, maxVelocity: number): number {
-    return velocity <= maxVelocity ? velocity += acceleration : maxVelocity
+export function accelerateToMax(velocity: number, acceleration: number, maxVelocity: number, delta: number): number {
+    return velocity <= maxVelocity ? velocity += acceleration * delta : maxVelocity
+}
+
+export function decelerateToZero(velocity: number, deceleration: number, delta: number): number {
+    return velocity >= 0 ? velocity *= deceleration * delta : 0
 }
 
 export function spriteCenterPosition(position: Position, size: Size): Position {

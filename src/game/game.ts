@@ -2,13 +2,16 @@ import * as PIXI from 'pixi.js';
 import { InteractionEvent } from 'pixi.js';
 import Bullet from './entities/bullet';
 import Player from './entities/player';
+import Controller from './controller';
 import { spriteCenterPosition } from '../utils/positions';
+import { Position } from 'src/types';
 export default class Game {
 
     private _app: any;
     private _player: Player;
     private _gameSpeed: number = 8;
     private _bullets: Bullet[] = [];
+    private _controller = new Controller();
 
     constructor(){
         this._app = new PIXI.Application({ 
@@ -22,14 +25,15 @@ export default class Game {
         document.body.appendChild(this._app.view);
 
         this.initStageListeners();
+        this._controller.initListeners();
 
         this._player.create();
         this._app.stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
-            this._player.update(delta);
+            this._controller.update(this._player.entity, delta);
             this._bullets.forEach((bullet: Bullet) => {
-                bullet.update(delta)
+                if(!bullet.destroyed) bullet.update(delta, this._app.stage)
             })
         });
     }
@@ -43,19 +47,19 @@ export default class Game {
 
             if(this._bullets.length <= 10){
                 const bullet = new Bullet(playerPosition, mousePosition);
-                bullet.create();
 
+                bullet.create();
                 this._app.stage.addChild(bullet.entity);
                 this._bullets.push(bullet)
             }
             else {
                 const firstDestroyedBullet = this._bullets.findIndex((elm: Bullet) => { return elm.destroyed });
-                console.log(firstDestroyedBullet)
 
                 if(firstDestroyedBullet !== -1) {
-                    this._app.stage.removeChild(this._bullets[firstDestroyedBullet]);
-                    this._bullets[firstDestroyedBullet].initialPosition = playerPosition;
-                    this._bullets[firstDestroyedBullet].targetPosition = mousePosition
+                    const destroyedBullet = this._bullets[firstDestroyedBullet];
+
+                    destroyedBullet.reset(playerPosition, mousePosition);
+                    this._app.stage.addChild(destroyedBullet.entity)
                 }
             }
         })

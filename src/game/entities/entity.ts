@@ -1,10 +1,10 @@
 import { Sprite, Graphics, Text } from 'pixi.js';
-import { Position, Size } from 'src/types';
+import { Position, Size, Velocity } from 'src/types';
 import { genPosition } from '../../utils/positions';
 
 export default abstract class Entity {
     protected _initialPosition: Position;
-    protected _velocity: number = 0;
+    protected _velocity: number | Velocity = 0;
     protected _entity: any;
     public _color: number;
     public _size: Size;
