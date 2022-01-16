@@ -21,3 +21,8 @@ export type Velocity = {
     x: number,
     y: number
 }
+
+export type TimestampedLyrics = {
+    time: number,
+    words: string
+}

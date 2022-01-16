@@ -6,35 +6,35 @@ import { angleBetweenTwoPoints, distanceBetweenTwoPoints } from '../../utils/pos
 export default class Bullet extends Entity {
 
     private _targetPosition: Position;
-    private _destroyed: boolean = false;
     private _angle: number;
     protected _velocity: number = 0;
 
     constructor(initialPosition: Position, targetPosition: Position) {
         super({ x: initialPosition.x, y: initialPosition.y }, 0xBBCC3D, { h: 6, w: 9 });
-        this._entity = new PIXI.Graphics();
         this._targetPosition = targetPosition;
         this._velocity = 10
     }
 
     public create(): void{
-        this._entity.beginFill(this._color)
-            .drawRect(this._initialPosition.x, this._initialPosition.y, this._size.w, this._size.h);
+        const bulletSprite = PIXI.Texture.from('bullet.png');
+        this._entity = new PIXI.Sprite(bulletSprite);
 
-        this._entity.position.set(this._initialPosition.x, this._initialPosition.y);
-        this._entity.pivot.set(this._entity.position.x + this._size.w / 2, this._entity.position.y + this._size.h / 2);
-        this._angle = (angleBetweenTwoPoints(this._initialPosition, this._targetPosition) * Math.PI) / 180;
-        this._entity.rotation = this._angle
+        this._entity.width = this._size.w;
+        this._entity.height = this._size.h;
+
+        this._entity.anchor.set(0.5);
+
+        this.setEntityData()
     }
 
-    public update(delta: number, stage: any) {
+    public update(delta: number) {
         if(this._destroyed) return;
 
         const distance = distanceBetweenTwoPoints(this._entity.position, this._targetPosition);
+        this._entity.pivot.set(this._entity.position.x, this._entity.position.y);
 
         if (distance <= this._velocity) {
-            this._destroyed = true;
-            stage.removeChild(this._entity);
+            this._destroyed = true
         }
         else {         
             this._entity.position.x += this._velocity * Math.cos(this._angle) * delta;
@@ -42,19 +42,19 @@ export default class Bullet extends Entity {
         }
     }
 
-    reset(playerPosition: Position, mousePosition: Position): void {
+    public reset(playerPosition: Position, mousePosition: Position): void {
         this._destroyed = false;
         this._initialPosition = playerPosition;
         this._targetPosition = mousePosition;
 
-        this.create()
+        this.setEntityData()
     }
 
-    set targetPosition(position: Position) {
-        this._targetPosition = position
-    }
+    private setEntityData(): void {
+        this._entity.position.x = this._initialPosition.x;
+        this._entity.position.y = this._initialPosition.y;
 
-    get destroyed(): boolean{
-        return this._destroyed
+        this._angle = (angleBetweenTwoPoints(this._initialPosition, this._targetPosition) * Math.PI) / 180;
+        this._entity.rotation = this._angle
     }
 }

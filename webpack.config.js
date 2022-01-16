@@ -1,7 +1,7 @@
 const path = require('path');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: ['./build/app.js', './src/assets/style/app.css'],
@@ -19,6 +19,11 @@ module.exports = {
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       title: 'Lyrical Mayhem'
+    }),
+    new CopyWebpackPlugin({
+        patterns: [
+            { from: 'src/assets/sprites' }
+        ]
     })
   ],
   output: {

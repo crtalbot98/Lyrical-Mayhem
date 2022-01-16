@@ -1,14 +1,14 @@
-import { Graphics } from "pixi.js";
-import { ControllerKeys, Velocity } from "src/types";
+import { Sprite } from "pixi.js";
+import { ControllerKeys } from "src/types";
 import Vector2D from "./vector2D";
 
 export default class Controller {
     
     private _keys: ControllerKeys;
-    private _maxVelocity: number = 5;
-    private _deceleration: number = 0.95;
+    private _maxVelocity: number = 8;
+    private _deceleration: number = 0.93;
     protected _velocity: number = 0;
-    private _acceleration: number = 0.5;
+    private _acceleration: number = 1;
     private _dirVector: Vector2D = new Vector2D(0,0);
 
     constructor() {
@@ -40,7 +40,7 @@ export default class Controller {
         }
     }
 
-    public update(entity: Graphics, delta: number): void {
+    public update(entity: Sprite, delta: number): void {
         this._dirVector.normalize();
 
         for(const [key, value] of Object.entries(this._keys)) {
@@ -56,16 +56,13 @@ export default class Controller {
 
         this._velocity *= this._deceleration * delta
 
-        // entity.pivot.set(entity.position.x + entity.getBounds().width / 2, entity.getBounds().height / 2);
         // entity.rotation = angle;
     }
 
     public initListeners(): void {
         document.addEventListener('keydown', (evt: KeyboardEvent) => {
             evt.preventDefault();
-            if(this._keys[evt.key]){
-                this._keys[evt.key].pressed = true
-            }
+            if(this._keys[evt.key]) this._keys[evt.key].pressed = true
         });
 
         document.addEventListener('keyup', (evt: KeyboardEvent) => {

@@ -51,7 +51,6 @@ export default class Vector2D {
     }
 
     set x(px: number) {
-        console.log(px)
         this._x = px
     }
 

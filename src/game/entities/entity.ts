@@ -4,10 +4,11 @@ import { genPosition } from '../../utils/positions';
 
 export default abstract class Entity {
     protected _initialPosition: Position;
-    protected _velocity: number | Velocity = 0;
+    protected _velocity: number = 0;
     protected _entity: any;
-    public _color: number;
-    public _size: Size;
+    protected _color: number;
+    protected _size: Size;
+    protected _destroyed: boolean = false;
 
     constructor(pos: Position, color: number, size: Size) {
         this._initialPosition = pos || genPosition();
@@ -25,5 +26,9 @@ export default abstract class Entity {
 
     get size(): Size {
         return this._size
+    }
+
+    get destroyed(): boolean{
+        return this._destroyed
     }
 }
