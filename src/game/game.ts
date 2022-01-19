@@ -1,15 +1,14 @@
 import * as PIXI from 'pixi.js';
 import { InteractionEvent } from 'pixi.js';
 import Bullet from './entities/bullet';
+import Lyric from './entities/lyric';
 import Player from './entities/player';
-import Controller from './controller';
-import { spriteCenterPosition } from '../utils/positions';
 import LyricHandler from './lyricHandler';
+import { detectCollisions } from '../utils/collisions';
 export default class Game {
 
     private _app: any;
     private _player: Player;
-    private _gameSpeed: number = 8;
     private _bullets: Bullet[] = [];
     private _lyricHandler = new LyricHandler(null);
 
@@ -22,20 +21,34 @@ export default class Game {
     }
 
     public init(): void {
+        const stage = this._app.stage;
         this._app.renderer.plugins.interactive = true;
-        
         document.body.appendChild(this._app.view);
+
+        this._lyricHandler.addLyric(stage);
 
         this.initStageListeners();
 
         this._player.create();
-        this._app.stage.addChild(this._player.entity);
+        stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
             this._player.update(delta);
 
+            this._lyricHandler.lyrics.forEach((lyric: Lyric) => {
+                if(lyric.destroyed) stage.removeChild(lyric.entity);
+                else lyric.update(delta);
+
+                this._bullets.forEach((bullet: Bullet) => {
+                    if(detectCollisions(bullet.entity, lyric.entity)){
+                        lyric.destroyed = true;
+                        bullet.destroyed = true
+                    }
+                })
+            });
+
             this._bullets.forEach((bullet: Bullet) => {
-                if(bullet.destroyed) this._app.stage.removeChild(bullet.entity)
+                if(bullet.destroyed) stage.removeChild(bullet.entity);
                 else bullet.update(delta)
             })
         });

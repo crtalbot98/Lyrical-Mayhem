@@ -4,11 +4,11 @@ import Lyric from './entities/lyric';
 
 export default class TextHandler {
 
-    private _currentSongLyrics: TimestampedLyrics[];
+    private _currentSongObj: TimestampedLyrics[];
     private _currentLyrics: Lyric[] = [];
 
     constructor(data: []) {
-        this._currentSongLyrics = data || [
+        this._currentSongObj = data || [
             {
                 "time": 19090,
                 "words": "What do you mean?"
@@ -32,8 +32,8 @@ export default class TextHandler {
         ];
     }
 
-    private addLyric(stage: any): void {
-        const text = this._currentSongLyrics[2].words
+    public addLyric(stage: any): void {
+        const text = this._currentSongObj[2].words
 
         if(this._currentLyrics.length <= 20){
             const nextLyric = new Lyric(text);
@@ -51,5 +51,13 @@ export default class TextHandler {
                 stage.addChild(destroyedLyric.entity)
             }
         }
+    }
+
+    get lyrics(): Lyric[] {
+        return this._currentLyrics
+    }
+
+    set currentSongObj(obj: TimestampedLyrics[]) {
+        this._currentSongObj = obj
     }
 }

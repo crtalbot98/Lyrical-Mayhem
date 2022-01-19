@@ -5,58 +5,67 @@ import Vector2D from "./vector2D";
 export default class Controller {
     
     private _keys: ControllerKeys;
-    private _maxVelocity: number = 8;
-    private _deceleration: number = 0.93;
-    protected _velocity: number = 0;
+    private _direction: Vector2D = new Vector2D(0,0);
+    private _playerEntity: Sprite;
+    private _maxSpeed: number = 8;
+    private _speed: number = 0;
     private _acceleration: number = 1;
-    private _dirVector: Vector2D = new Vector2D(0,0);
+    private _deceleration: number = 0.91;
+    private _movementCutoff: number = 0.5;
 
-    constructor() {
+    constructor(entity: Sprite) {
+        this._playerEntity = entity;
         this._keys = {
             'w': {
                 pressed: false,
                 func: () => {
-                    this._dirVector.y -= 1
+                    this._direction.y -= 1
                 }
             },
             'a': {
                 pressed: false,
                 func: () => {
-                    this._dirVector.x -= 1
+                    this._direction.x -= 1
                 }
             },
             's': {
                 pressed: false,
                 func: () => {
-                    this._dirVector.y += 1
+                    this._direction.y += 1
                 }
             },
             'd': {
                 pressed: false,
                 func: () => {
-                    this._dirVector.x += 1
+                    this._direction.x += 1
                 }
             }
         }
     }
 
-    public update(entity: Sprite, delta: number): void {
-        this._dirVector.normalize();
+    public update(delta: number): void {
+        const dir = this._direction.normalize;
+        const nextPos = new Vector2D(dir.x, dir.y).normalize;
+        let keysPressed = false;
 
         for(const [key, value] of Object.entries(this._keys)) {
             if(value.pressed){ 
-                this._velocity = Math.min(this._maxVelocity, this._velocity += this._acceleration) * delta;
+                this._speed = Math.min(this._maxSpeed, this._speed += this._acceleration) * delta;
                 this._keys[key].func();
+                keysPressed = true
             }
         };
 
-        const angle = this._dirVector.direction();
-        entity.position.x += (this._velocity * Math.sin(angle)) * delta;
-        entity.position.y += (this._velocity * Math.cos(angle)) * delta;
+        // Reset the direction the character is moving, if nothing is pressed and speed is low enough
+        if(!keysPressed && this._speed < this._movementCutoff){
+            this._direction.x = 0;
+            this._direction.y = 0
+        }
 
-        this._velocity *= this._deceleration * delta
+        this._playerEntity.position.x += nextPos.x * this._speed * delta;
+        this._playerEntity.position.y += nextPos.y * this._speed * delta;
 
-        // entity.rotation = angle;
+        this._speed *= this._deceleration * delta;
     }
 
     public initListeners(): void {

@@ -20,16 +20,7 @@ export default class Vector2D {
         }
     }
 
-    public normalize(): void {
-        const mag = this.magnitude();
-
-        if(mag > 0){
-           this._x /= mag;
-           this._y /= mag
-        }
-    }
-
-    public direction(): number {    
+    public direction(): number {   
         return Math.atan2(this._x, this._y)
     }
 
@@ -38,8 +29,15 @@ export default class Vector2D {
         this._y *= scalar
     }
 
-    get points(): Position {
-        return { x : this._x, y: this._y }
+    get normalize(): Position {
+        const mag = this.magnitude();
+
+        if(mag > 0){
+           this._x /= mag;
+           this._y /= mag
+        }
+
+        return { x: this._x, y: this._y }
     }
 
     get x(): number {

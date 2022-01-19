@@ -22,7 +22,7 @@ export default class Bullet extends Entity {
         this._entity.width = this._size.w;
         this._entity.height = this._size.h;
 
-        this._entity.anchor.set(0.5);
+        // this._entity.anchor.set(0.5);
 
         this.setEntityData()
     }

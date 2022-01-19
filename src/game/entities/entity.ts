@@ -31,4 +31,8 @@ export default abstract class Entity {
     get destroyed(): boolean{
         return this._destroyed
     }
+
+    set destroyed(val: boolean) {
+        this._destroyed = val
+    }
 }
