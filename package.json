@@ -13,10 +13,11 @@
   "license": "ISC",
   "dependencies": {
     "brfs": "^1.4.1",
+    "dotenv-webpack": "^7.1.0",
     "json-loader": "^0.5.4",
-    "pixi.js": "^3.0.8",
-    "transform-loader": "^0.2.3",
-    "typescript": "^4.5.4"
+    "pixi.js": "^6.2.2",
+    "spotify-web-sdk": "^0.7.1",
+    "transform-loader": "^0.2.3"
   },
   "devDependencies": {
     "@types/pixi.js": "^5.0.0",
@@ -27,6 +28,7 @@
     "style-loader": "^3.3.1",
     "webpack": "^5.65.0",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.7.1"
+    "webpack-dev-server": "^4.7.1",
+    "typescript": "^4.5.4"
   }
 }
