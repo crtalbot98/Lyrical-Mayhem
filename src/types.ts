@@ -1,4 +1,4 @@
-export type Position = {
+export type SimpleVector2D = {
     x: number,
     y: number
 }
@@ -14,7 +14,8 @@ export type ControllerKeys = {
 
 export type ControllerHandler = {
     pressed: boolean,
-    func: any
+    move: Function,
+    stop: Function
 }
 
 export type Velocity = {

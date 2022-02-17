@@ -1,23 +1,23 @@
-import * as PIXI from 'pixi.js';
-import { Position, Velocity } from "src/types";
+import { Texture, Sprite } from "pixi.js";
+import { SimpleVector2D } from "src/types";
 import Entity from "./entity";
 import { angleBetweenTwoPoints, distanceBetweenTwoPoints } from '../../utils/positions';
 
 export default class Bullet extends Entity {
 
-    private _targetPosition: Position;
+    private _targetPosition: SimpleVector2D;
     private _angle: number;
     protected _velocity: number = 0;
 
-    constructor(initialPosition: Position, targetPosition: Position) {
+    constructor(initialPosition: SimpleVector2D, targetPosition: SimpleVector2D) {
         super({ x: initialPosition.x, y: initialPosition.y }, 0xBBCC3D, { h: 6, w: 9 });
         this._targetPosition = targetPosition;
         this._velocity = 10
     }
 
     public create(): void{
-        const bulletSprite = PIXI.Texture.from('bullet.png');
-        this._entity = new PIXI.Sprite(bulletSprite);
+        const bulletSprite = Texture.from('bullet.png');
+        this._entity = new Sprite(bulletSprite);
 
         this._entity.width = this._size.w;
         this._entity.height = this._size.h;
@@ -42,7 +42,7 @@ export default class Bullet extends Entity {
         }
     }
 
-    public reset(playerPosition: Position, mousePosition: Position): void {
+    public reset(playerPosition: SimpleVector2D, mousePosition: SimpleVector2D): void {
         this._destroyed = false;
         this._initialPosition = playerPosition;
         this._targetPosition = mousePosition;
