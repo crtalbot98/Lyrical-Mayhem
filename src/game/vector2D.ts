@@ -1,4 +1,4 @@
-import { Position } from "src/types";
+import { SimpleVector2D } from "src/types";
 
 export default class Vector2D {
     
@@ -29,7 +29,7 @@ export default class Vector2D {
         this._y *= scalar
     }
 
-    get normalize(): Position {
+    get normalize(): SimpleVector2D {
         const mag = this.magnitude();
 
         if(mag > 0){

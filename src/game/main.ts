@@ -1,5 +1,4 @@
-import * as PIXI from 'pixi.js';
-import { InteractionEvent } from 'pixi.js';
+import * as PIXI from "pixi.js";
 import Bullet from './entities/bullet';
 import Lyric from './entities/lyric';
 import Player from './entities/player';
@@ -7,22 +6,28 @@ import LyricHandler from './lyricHandler';
 import { detectCollisions } from '../utils/collisions';
 export default class Game {
 
-    private _app: any;
+    private _app: PIXI.Application;
     private _player: Player;
     private _bullets: Bullet[] = [];
     private _lyricHandler = new LyricHandler(null);
 
     constructor(){
+        PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
+
         this._app = new PIXI.Application({ 
             resizeTo: window,
             backgroundColor: 0xE8E8E8
         });
-        this._player = new Player({ x: this._app.renderer.width / 2, y: this._app.renderer.height / 2 })
+        this._player = new Player({ 
+            x: this._app.renderer.width / 2, 
+            y: this._app.renderer.height / 2 
+        })
     }
 
     public init(): void {
         const stage = this._app.stage;
-        this._app.renderer.plugins.interactive = true;
+
+        // this._app.renderer.plugins.interactive = true;
         document.body.appendChild(this._app.view);
 
         this._lyricHandler.addLyric(stage);
@@ -55,7 +60,7 @@ export default class Game {
     }
 
     private initStageListeners() {
-        this._app.renderer.plugins.interaction.on('mouseup', (evt: InteractionEvent) => {
+        this._app.renderer.plugins.interaction.on('mouseup', (evt: any) => {
             const mousePosition = { 
                 x: Math.floor(evt.data.global.x), 
                 y: Math.floor(evt.data.global.y) 

@@ -1,5 +1,5 @@
-import Game from "./game/game";
+import Game from "./game/main";
 
-const game = new Game;
+const game = new Game();
 
 game.init()

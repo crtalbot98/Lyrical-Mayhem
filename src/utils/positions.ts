@@ -1,20 +1,20 @@
-import { Position, Size } from "src/types";
+import { SimpleVector2D, Size } from "src/types";
 
-export function genPosition(): Position {
+export function genPosition(): SimpleVector2D {
     return {
         x: 0,
         y: 0
     }
 }
 
-export function angleBetweenTwoPoints(p1: Position, p2: Position): number {
+export function angleBetweenTwoPoints(p1: SimpleVector2D, p2: SimpleVector2D): number {
     const dx: number = p2.x - p1.x;
     const dy: number = p2.y - p1.y;
 
     return (Math.atan2(dy, dx) * 180) / Math.PI
 }
 
-export function distanceBetweenTwoPoints(p1: Position, p2: Position): number {
+export function distanceBetweenTwoPoints(p1: SimpleVector2D, p2: SimpleVector2D): number {
     const dx: number = p2.x - p1.x;
     const dy: number = p2.y - p1.y;
 
@@ -29,7 +29,7 @@ export function decelerateToZero(velocity: number, deceleration: number, delta: 
     return velocity >= 0 ? velocity *= deceleration * delta : 0
 }
 
-export function spriteCenterPosition(position: Position, size: Size): Position {
+export function spriteCenterPosition(position: SimpleVector2D, size: Size): SimpleVector2D {
     return {
         x: position.x + size.w / 2,
         y: position.y + size.h / 2
