@@ -4,12 +4,14 @@ import Lyric from './entities/lyric';
 import Player from './entities/player';
 import LyricHandler from './lyricHandler';
 import { detectCollisions } from '../utils/collisions';
+import { appState } from "../stateHandler";
+import Controller from "./controller";
 export default class Game {
 
     private _app: PIXI.Application;
     private _player: Player;
-    private _bullets: Bullet[] = [];
     private _lyricHandler = new LyricHandler(null);
+    private _controller: Controller;
 
     constructor(){
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
@@ -31,58 +33,43 @@ export default class Game {
         document.body.appendChild(this._app.view);
 
         this._lyricHandler.addLyric(stage);
-
-        this.initStageListeners();
-
         this._player.create();
+
+        this._controller = new Controller(this._player);
+        this._controller.initListeners();
+
         stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
+            // if(appState.loading || appState.paused) return;
+
             this._player.update(delta);
+            this._controller.update(delta, this._app.stage);
+            this.checkCollisions(delta);
+            this.updateAllProjectiles(delta)
+        });
+    }
 
-            this._lyricHandler.lyrics.forEach((lyric: Lyric) => {
-                if(lyric.destroyed) stage.removeChild(lyric.entity);
-                else lyric.update(delta);
+    private checkCollisions(delta: number): void {
+        this._lyricHandler.lyrics.forEach((lyric: Lyric) => {
+            if(lyric.destroyed) this._app.stage.removeChild(lyric.entity);
+            else lyric.update(delta);
 
-                this._bullets.forEach((bullet: Bullet) => {
+            if(this._player.bullets.length >= 1) {
+                this._player.bullets.forEach((bullet: Bullet) => {
                     if(detectCollisions(bullet.entity, lyric.entity)){
                         lyric.destroyed = true;
                         bullet.destroyed = true
                     }
                 })
-            });
-
-            this._bullets.forEach((bullet: Bullet) => {
-                if(bullet.destroyed) stage.removeChild(bullet.entity);
-                else bullet.update(delta)
-            })
+            }
         });
     }
 
-    private initStageListeners() {
-        this._app.renderer.plugins.interaction.on('mouseup', (evt: any) => {
-            const mousePosition = { 
-                x: Math.floor(evt.data.global.x), 
-                y: Math.floor(evt.data.global.y) 
-            };
-
-            if(this._bullets.length <= 10){
-                const bullet = new Bullet(this._player.entity.position, mousePosition);
-
-                bullet.create();
-                this._app.stage.addChild(bullet.entity);
-                this._bullets.push(bullet)
-            }
-            else {
-                const firstDestroyedBullet = this._bullets.findIndex((elm: Bullet) => { return elm.destroyed });
-
-                if(firstDestroyedBullet !== -1) {
-                    const destroyedBullet = this._bullets[firstDestroyedBullet];
-
-                    destroyedBullet.reset(this._player.entity.position, mousePosition);
-                    this._app.stage.addChild(destroyedBullet.entity)
-                }
-            }
+    private updateAllProjectiles(delta: number) {
+        this._player.bullets.forEach((bullet: Bullet) => {
+            if(bullet.destroyed) this._app.stage.removeChild(bullet.entity);
+            else bullet.update(delta);
         })
     }
 }

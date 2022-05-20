@@ -10,6 +10,6 @@
       "baseUrl": ".",
       "skipLibCheck": true,
     },
-    "include": ["src/**/*", "src/app.ts"],
+    "include": ["src/**/*", "src/app.ts", "stateManager.ts"],
     "exclude": ["**/*.spec.ts"]
   }

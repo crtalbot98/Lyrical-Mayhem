@@ -14,8 +14,8 @@ export type ControllerKeys = {
 
 export type ControllerHandler = {
     pressed: boolean,
-    move: Function,
-    stop: Function
+    move?: Function,
+    stop?: Function
 }
 
 export type Velocity = {
@@ -26,4 +26,8 @@ export type Velocity = {
 export type TimestampedLyrics = {
     time: number,
     words: string
+}
+
+export type State = {
+    [key: string]: string | number | boolean
 }

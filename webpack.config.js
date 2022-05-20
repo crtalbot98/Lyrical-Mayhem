@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DotEnv = require('dotenv-webpack');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: {
@@ -15,7 +16,11 @@ module.exports = {
     rules: [
       {
         test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        use: [
+          MiniCssExtractPlugin.loader,
+          "css-loader",
+          "postcss-loader",
+        ]
       },
     ]
   },
@@ -44,8 +49,11 @@ module.exports = {
     }),
     new CopyWebpackPlugin({
         patterns: [
-            { from: 'src/assets/sprites' }
+            { from: 'src/assets' }
         ]
+    }),
+    new MiniCssExtractPlugin({
+      filename:"main.css",
     })
   ],
   output: {
