@@ -68,6 +68,7 @@ export default class Controller {
                 else if(dir.x === 0 && dir.y === 0) {
                     this._speed = Math.max(0, this._speed - this._force * delta)
                 }
+
                 this._keys[key].move()
             }
         };
