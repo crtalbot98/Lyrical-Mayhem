@@ -18,33 +18,32 @@ export default class Game {
 
         this._app = new PIXI.Application({ 
             resizeTo: window,
-            backgroundColor: 0xE8E8E8
+            backgroundColor: 0x737373
+            
         });
         this._player = new Player({ 
             x: this._app.renderer.width / 2, 
             y: this._app.renderer.height / 2 
-        })
+        });
+        this._controller = new Controller(this._player)
     }
 
     public init(): void {
         const stage = this._app.stage;
-
-        // this._app.renderer.plugins.interactive = true;
+        
         document.body.appendChild(this._app.view);
 
-        this._lyricHandler.addLyric(stage);
         this._player.create();
 
-        this._controller = new Controller(this._player);
-        this._controller.initListeners();
+        this._lyricHandler.addLyric(stage);
+        this._controller.initListeners(stage);
 
         stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
             // if(appState.loading || appState.paused) return;
 
-            this._player.update(delta);
-            this._controller.update(delta, this._app.stage);
+            this._controller.update(delta);
             this.checkCollisions(delta);
             this.updateAllProjectiles(delta)
         });
