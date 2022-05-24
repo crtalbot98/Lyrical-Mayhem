@@ -5,9 +5,9 @@ export default class Vector2D {
     private _x: number;
     private _y: number;
 
-    constructor(px: number, py: number) {
-        this._x = px;
-        this._y = py;
+    constructor() {
+        this._x = 0;
+        this._y = 0;
     }
 
     public magnitude(): number {
@@ -29,7 +29,7 @@ export default class Vector2D {
         this._y *= scalar
     }
 
-    get normalize(): SimpleVector2D {
+    get normalized(): SimpleVector2D {
         const mag = this.magnitude();
 
         if(mag > 0){
