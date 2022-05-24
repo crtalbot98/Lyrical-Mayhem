@@ -35,7 +35,3 @@ export function spriteCenterPosition(position: SimpleVector2D, size: Size): Simp
         y: position.y + size.h / 2
     }
 }
-
-export function lerp (start: number, end: number, amt: number){
-    return (1-amt)*start+amt*end
-}
