@@ -11,9 +11,9 @@ export default class Controller {
     private _keys: ControllerKeys;
     private _direction: Vector2D = new Vector2D();
     private _player: Player;
-    private _maxSpeed: number = 8;
+    private _maxSpeed: number = 10;
     private _speed: number = 0;
-    private _force: number = 0.15;
+    private _force: number = 0.75;
 
     constructor(entity: Player) {
         this._player = entity;
@@ -62,9 +62,12 @@ export default class Controller {
 
         for(const [key, value] of Object.entries(this._keys)) {
             if(value.pressed){
-                if(dir.x !== 0 || dir.y !== 0) this._speed = Math.min(this._maxSpeed, this._speed + this._force * delta);
-                else this._speed = Math.max(0, this._speed - this._force * delta * 1.5)
-
+                if(dir.x !== 0 || dir.y !== 0) {
+                    this._speed = Math.min(this._maxSpeed, this._speed + this._force * delta)
+                }
+                else if(dir.x === 0 && dir.y === 0) {
+                    this._speed = Math.max(0, this._speed - this._force * delta)
+                }
                 this._keys[key].move()
             }
         };
@@ -81,9 +84,7 @@ export default class Controller {
         document.addEventListener('keydown', (evt: KeyboardEvent) => {
             evt.preventDefault();
             if(evt.key === ' ') {
-                debounce(() => {
-                    this.generateBulletFromPlayer(stage)
-                }, 200, false);
+                this.generateBulletFromPlayer(stage)
             }
             else if(this._keys[evt.key]){
                 this._keys[evt.key].pressed = true
