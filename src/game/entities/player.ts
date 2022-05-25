@@ -2,7 +2,7 @@ import { Texture, Sprite } from 'pixi.js';
 import Entity from './entity';
 import Vector2D from '../vector2D';
 import { SimpleVector2D } from 'src/types';
-import { withinScreenBounds } from '../../utils/collisions';
+import { withinScreenBounds } from '../utils/collisions';
 import Bullet from './bullet';
 
 export default class Player extends Entity {

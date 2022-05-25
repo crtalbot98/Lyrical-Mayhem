@@ -3,7 +3,7 @@ import Bullet from './entities/bullet';
 import Lyric from './entities/lyric';
 import Player from './entities/player';
 import LyricHandler from './lyricHandler';
-import { detectCollisions } from '../utils/collisions';
+import { detectCollisions } from './utils/collisions';
 import { appState } from "../stateHandler";
 import Controller from "./controller";
 export default class Game {

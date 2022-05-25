@@ -9,7 +9,10 @@
       "moduleResolution": "node",
       "baseUrl": ".",
       "skipLibCheck": true,
+      "jsx": "react",
+      "esModuleInterop": true,
+      "module": "commonjs"
     },
-    "include": ["src/**/*", "src/app.ts", "stateManager.ts"],
+    "include": ["src/**/*",],
     "exclude": ["**/*.spec.ts"]
   }

@@ -1,8 +1,8 @@
 import { Texture, Sprite } from "pixi.js";
 import { SimpleVector2D } from "src/types";
 import Entity from "./entity";
-import { angleBetweenTwoPoints, distanceBetweenTwoPoints } from "../../utils/positions";
-import { withinScreenBounds } from "../../utils/collisions";
+import { angleBetweenTwoPoints, distanceBetweenTwoPoints } from "../utils/positions";
+import { withinScreenBounds } from "../utils/collisions";
 
 export default class Bullet extends Entity {
 

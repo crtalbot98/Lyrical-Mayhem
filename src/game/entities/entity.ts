@@ -1,6 +1,6 @@
 import { Sprite, Graphics, Text } from 'pixi.js';
 import { Size, SimpleVector2D, Velocity } from 'src/types';
-import { genPosition } from '../../utils/positions';
+import { genPosition } from '../utils/positions';
 
 export default abstract class Entity {
     protected _initialPosition: SimpleVector2D;
