@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+@layer base {
+	h1 {
+		@apply text-7xl font-semibold antialiased tracking-wide;
+	}
+
+	p, a {
+		@apply text-2xl font-medium;
+	}
+
+	.link-button {
+		@apply bg-yellowCrayola h-max w-full p-6 text-center;
+	}
+}

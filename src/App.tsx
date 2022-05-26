@@ -1,16 +1,21 @@
-import '../src/styles/style.css';
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Game from "./game/main";
-
-const game = new Game();
+import PlayerBar from './spotify-player/player';
+import LoginModal from './login/modal';
+import './styles/main.css';
 
 const App: React.FC = () => {
 
+  const game = useRef(null);
+
   useEffect(() => {
-    game.init();
+    game.current = new Game();
+    game.current.init();
   }, [])
 
-  return <div className="bg-gray-400">
+  return <div className="m-0 p-0">
+    <LoginModal/>
+    {/* <PlayerBar/> */}
   </div>;
 };
 
