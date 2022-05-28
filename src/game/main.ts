@@ -41,7 +41,7 @@ export default class Game {
         stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
-            if(!store.getState().spotifyPlayer.isPlaying) return;
+            if(!store.getState().spotifyPlayer.playing) return;
             this._controller.update(delta);
             this._player.update(delta, stage);
             this.checkCollisions(delta)

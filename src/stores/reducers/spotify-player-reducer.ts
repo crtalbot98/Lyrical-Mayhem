@@ -1,18 +1,25 @@
 import { createReducer, createAction } from '@reduxjs/toolkit'
 
 interface PlayerState {
-    isPlaying: boolean
+  playing: boolean,
+	currentSong: string
 }
 
-const setIsPlaying = createAction('player/setIsPlaying');
+const setPlaying = createAction('spotifyPlayer/setPlaying');
+const setCurrentSong = createAction('spotifyPlayer/setCurrentSong');
 
-const initialState = { isPlaying: false } as PlayerState;
+const initialState = { 
+	playing: false 
+} as PlayerState;
  
 const spotifyPlayerReducer = createReducer(initialState, (builder) => {
-    builder
-        .addCase(setIsPlaying, (state, action) => {
-            state.isPlaying = action.payload
-        })
+  builder
+      .addCase(setPlaying, (state) => {
+          state.playing = !state.playing
+      })
+			.addCase(setCurrentSong, (state, action) => {
+				state.currentSong = action.payload;
+		})
 });
 
 export default spotifyPlayerReducer

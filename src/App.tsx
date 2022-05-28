@@ -1,18 +1,13 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import LoginModal from './login/modal';
 import './styles/main.css';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Scene from './spotify-player/scene';
-
+import { RootState } from './stores/store';
 
 const App: React.FC = () => {
 
-  const dispatch = useDispatch();
-  const loggedIn = useSelector((state) => state.auth.loggedIn);
-
-  useEffect(() => {
-    dispatch({ type: 'auth/setLoggedIn' });
-  }, []);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 
   return <div className="m-0 p-0">
     { loggedIn ? <Scene/> : <LoginModal/> }

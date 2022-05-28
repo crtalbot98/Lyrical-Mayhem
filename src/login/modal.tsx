@@ -1,8 +1,16 @@
 import React, { useEffect } from 'react'
-import { Dispatch } from '@reduxjs/toolkit';
 import FullScreenModal from '../modals/fullscreenModal';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/stores/store';
 
 const LoginModal: React.FC = () => {
+	
+	const dispatch = useDispatch();
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+
+  useEffect(() => {
+    dispatch({ type: 'auth/setLoggedIn' });
+  }, []);
 
 	return <FullScreenModal>
 	  <div className='bg-lightGray modal'>
@@ -17,7 +25,7 @@ const LoginModal: React.FC = () => {
 					To use this application you need to log into your Spotify account and get an access token.
 				</p>
 	      <a 
-					href="http://localhost:8888/auth" 
+					href="http://localhost:8888/auth/getUserCode" 
 					className='link-button self-center mt-auto text-darkBlack'
 				>
 					Log in with Spotify
