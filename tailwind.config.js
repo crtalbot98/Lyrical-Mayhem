@@ -8,11 +8,12 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        raisinBlack: '#22181C',
-        languidLavender: '#E0D3DE',
-        yellowCrayola: '#FFE66D',
-        blackChocolate: '#1D1B17',
-        orangePantone: '#FB6107'
+        black: '#000009',
+        gray: '#1F2C28',
+        lightGray: '#293834',
+        lightGreen: '#317B22',
+        lightText: '#DAF7DC',
+        orange: '#E55934'
       },
       fontFamily: {
         'sans': ['Bebas Neue', ...defaultTheme.fontFamily.sans],

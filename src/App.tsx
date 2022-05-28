@@ -1,22 +1,22 @@
-import React, { useEffect, useRef } from 'react'
-import Game from "./game/main";
-import PlayerBar from './spotify-player/player';
+import React, { useEffect } from 'react'
 import LoginModal from './login/modal';
 import './styles/main.css';
+import { useSelector, useDispatch } from 'react-redux';
+import Scene from './spotify-player/scene';
+
 
 const App: React.FC = () => {
 
-  const game = useRef(null);
+  const dispatch = useDispatch();
+  const loggedIn = useSelector((state) => state.auth.loggedIn);
 
   useEffect(() => {
-    game.current = new Game();
-    game.current.init();
-  }, [])
+    dispatch({ type: 'auth/setLoggedIn' });
+  }, []);
 
   return <div className="m-0 p-0">
-    <LoginModal/>
-    {/* <PlayerBar/> */}
-  </div>;
+    { loggedIn ? <Scene/> : <LoginModal/> }
+  </div>
 };
 
 export default App;

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import spotifyPlayerReducer from './reducers/spotify-player-reducer'
+import authReducer from './reducers/auth-reducer'
 
 export const store = configureStore({
     reducer: {
-        spotifyPlayer: spotifyPlayerReducer
+        spotifyPlayer: spotifyPlayerReducer,
+        auth: authReducer
     },
 })
 

@@ -6,14 +6,20 @@
 
 @layer base {
 	h1 {
-		@apply text-7xl font-semibold antialiased tracking-wide;
+		@apply text-6xl font-semibold antialiased tracking-wide;
 	}
 
 	p, a {
-		@apply text-2xl font-medium;
+		@apply text-2xl font-medium text-lightText;
+	}
+}
+
+@layer components {
+	.link-button {
+		@apply bg-lightGreen h-max w-full p-6 text-center rounded;
 	}
 
-	.link-button {
-		@apply bg-yellowCrayola h-max w-full p-6 text-center;
+	.modal {
+		@apply box-border flex flex-col justify-between drop-shadow-2xl rounded p-5 space-y-8 md:p-10 md:h-96;
 	}
 }
