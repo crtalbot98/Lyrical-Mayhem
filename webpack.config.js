@@ -4,64 +4,66 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const DotEnv = require('dotenv-webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const isProd = process.env.NODE_ENV === "production";
+const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    app: path.resolve(__dirname, './build/app.js'), 
-    login: path.resolve(__dirname, './build/auth/login.js')
+    entry: './src/index.tsx',
   },
-  mode: 'development',
   devtool: false,
+  mode: isProd ? "production" : "development",
   module: {
     rules: [
       {
         test: /\.css$/i,
         use: [
-          MiniCssExtractPlugin.loader,
-          "css-loader",
-          "postcss-loader",
+          'style-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              importLoaders: 1
+            }
+          },
+          'postcss-loader'
         ]
+      },
+      {
+        test: /\.tsx?$/,
+        use: "babel-loader",
+        exclude: /node_modules/,
       },
     ]
   },
   plugins: [
     new DotEnv(),
     new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      template: './src/views/index.html',
-      filename: 'index.html',
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true
-      },
-      chunks: ['app']
-    }),
-    new HtmlWebpackPlugin({
-      inject: 'body',
-      template: './src/views/login.html',
-      filename: 'login.html',
-      minify: {
-        removeComments: true,
-        collapseWhitespace: true
-      },
-      chunks: ['login']
-    }),
+    new webpack.HotModuleReplacementPlugin(),
     new CopyWebpackPlugin({
         patterns: [
             { from: 'src/assets' }
         ]
     }),
     new MiniCssExtractPlugin({
-      filename:"main.css",
-    })
+      filename: './dist/output.css',
+    }),
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      filename: "index.html",
+      inject: "body",
+    }),
   ],
+  devServer: {
+    hot: true,
+    port: 8080,
+    open: true,
+  },
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].[contenthash:8].js'
   },
   resolve: {
-    extensions: ['.js', '.ts', '.es.js', '.css'],
+    extensions: ['.js', '.ts', '.es.js', '.css', '.tsx', '.jsx'],
     fallback: {
       'path': false,
       'fs': false

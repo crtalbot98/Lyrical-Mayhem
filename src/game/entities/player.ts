@@ -2,7 +2,6 @@ import { Texture, Sprite } from 'pixi.js';
 import Entity from './entity';
 import Vector2D from '../vector2D';
 import { SimpleVector2D } from 'src/types';
-import { withinScreenBounds } from '../../utils/collisions';
 import Bullet from './bullet';
 
 export default class Player extends Entity {
@@ -25,10 +24,11 @@ export default class Player extends Entity {
         this._entity.anchor.set(0.5);
     }
 
-    public update(delta: number): void {
-        // if(!withinScreenBounds(this._entity)){
-        //     this._entity.position.set(this._initialPosition.x, this._initialPosition.y);
-        // }
+    public update(delta: number, stage: any): void {
+        this._playerBullets.forEach((bullet: Bullet) => {
+            if(bullet.destroyed) stage.removeChild(bullet.entity);
+            else bullet.update(delta);
+        })
     }
 
     get bullets(): Bullet[] {

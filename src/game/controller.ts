@@ -1,10 +1,10 @@
 import { ControllerKeys } from "src/types";
 import Vector2D from "./vector2D";
 import Bullet from "./entities/bullet";
-import { withinScreenBounds } from "../utils/collisions";
-import { lerp } from "../utils/positions";
+import { withinScreenBounds } from "./utils/collisions";
+import { lerp } from "./utils/positions";
 import Player from "./entities/player";
-import { debounce } from "../utils/time";
+import { debounce } from "./utils/time";
 
 export default class Controller {
     

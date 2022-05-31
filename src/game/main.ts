@@ -3,9 +3,10 @@ import Bullet from './entities/bullet';
 import Lyric from './entities/lyric';
 import Player from './entities/player';
 import LyricHandler from './lyricHandler';
-import { detectCollisions } from '../utils/collisions';
-import { appState } from "../stateHandler";
+import { detectCollisions } from './utils/collisions';
 import Controller from "./controller";
+import { store } from '../stores/store';
+
 export default class Game {
 
     private _app: PIXI.Application;
@@ -19,7 +20,6 @@ export default class Game {
         this._app = new PIXI.Application({ 
             resizeTo: window,
             backgroundColor: 0x737373
-            
         });
         this._player = new Player({ 
             x: this._app.renderer.width / 2, 
@@ -41,11 +41,10 @@ export default class Game {
         stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
-            // if(appState.loading || appState.paused) return;
-
+            if(!store.getState().spotifyPlayer.playing) return;
             this._controller.update(delta);
-            this.checkCollisions(delta);
-            this.updateAllProjectiles(delta)
+            this._player.update(delta, stage);
+            this.checkCollisions(delta)
         });
     }
 
@@ -63,12 +62,5 @@ export default class Game {
                 })
             }
         });
-    }
-
-    private updateAllProjectiles(delta: number) {
-        this._player.bullets.forEach((bullet: Bullet) => {
-            if(bullet.destroyed) this._app.stage.removeChild(bullet.entity);
-            else bullet.update(delta);
-        })
     }
 }

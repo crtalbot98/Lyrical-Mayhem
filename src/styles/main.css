@@ -1,3 +1,25 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+@layer base {
+	h1 {
+		@apply text-6xl font-semibold antialiased tracking-wide;
+	}
+
+	p, a {
+		@apply text-2xl font-medium text-lightText;
+	}
+}
+
+@layer components {
+	.link-button {
+		@apply bg-lightGreen h-max w-full p-6 text-center rounded;
+	}
+
+	.modal {
+		@apply box-border flex flex-col justify-between drop-shadow-2xl rounded p-5 space-y-8 md:p-10 md:h-96;
+	}
+}
