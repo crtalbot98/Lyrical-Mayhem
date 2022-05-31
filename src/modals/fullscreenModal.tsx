@@ -2,15 +2,16 @@ import React, { ReactNode, FC } from 'react'
 import { store } from '../stores/store'
 
 type FullScreenModalProps = {
-	children: ReactNode
+	children: ReactNode,
+  classes: string
 }
 
-const FullScreenModal: FC<FullScreenModalProps> = ({children}) => {
+const FullScreenModal: FC<FullScreenModalProps> = ({children, classes}) => {
 
   const [open, setOpen] = React.useState(false); 
 
   return <div 
-          className='bg-gray w-full h-full absolute flex justify-center items-center px-2 md:px-10'
+          className={`bg-gray w-full h-full absolute ${classes}`}
           onClick={() => { setOpen(false) }}
          >
     {children}

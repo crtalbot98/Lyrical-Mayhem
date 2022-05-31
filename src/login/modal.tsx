@@ -12,24 +12,24 @@ const LoginModal: React.FC = () => {
     dispatch({ type: 'auth/setLoggedIn' });
   }, []);
 
-	return <FullScreenModal>
+	return <FullScreenModal classes={'flex justify-center items-center px-2 md:px-10'}>
 	  <div className='bg-lightGray modal'>
-	      <h1 
-		  		className='text-orange'
-				>
-					Welcome to Lyrical Mayhem
-				</h1>
-	      <p 
-					className='text-white w-5/6'
-				>
-					To use this application you need to log into your Spotify account and get an access token.
-				</p>
-	      <a 
-					href="http://localhost:8888/auth/getUserCode" 
-					className='link-button self-center mt-auto text-darkBlack'
-				>
-					Log in with Spotify
-				</a>
+	    <h1 
+		  	className='text-orange'
+			>
+				Welcome to Lyrical Mayhem
+			</h1>
+	    <p 
+				className='text-white w-5/6'
+			>
+				To use this application you need to log into your Spotify account and get an access token.
+			</p>
+	    <a 
+				href="http://localhost:8888/auth/getUserCode" 
+				className='link-button self-center mt-auto text-darkBlack'
+			>
+				Log in with Spotify
+			</a>
 	  </div>
 	</FullScreenModal>
 }
