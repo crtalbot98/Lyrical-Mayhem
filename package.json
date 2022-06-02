@@ -30,6 +30,7 @@
     "@types/pixi.js": "^5.0.0",
     "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.5",
+    "@types/spotify-web-playback-sdk": "^0.1.12",
     "babel-loader": "^8.2.5",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^10.2.0",

@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react'
-import { WebPlaybackSDK } from 'react-spotify-web-playback-sdk';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../stores/store';
 
