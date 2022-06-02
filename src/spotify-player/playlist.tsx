@@ -16,7 +16,7 @@ const PlayList: React.FC = () => {
 		const userPlaylists = await fetch('https://api.spotify.com/v1/me/playlists', {
 			method: 'get',
       headers: new Headers({
-        'Authorization': `Bearer ${aToken}`,
+        'Authorization': `Bearer ${aToken}`
       })
 		});
 		const playlistsJson = await userPlaylists.json();

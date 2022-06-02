@@ -16,7 +16,7 @@ const TrackList: React.FC<TrackListProps> = ({currentTrackListHref}) => {
 		const playlistTracks = await fetch(href, {
 			method: 'get',
       headers: new Headers({
-        'Authorization': `Bearer ${aToken}`,
+        'Authorization': `Bearer ${aToken}`
       })
 		});
 		const tracksJson = await playlistTracks.json();
@@ -24,6 +24,8 @@ const TrackList: React.FC<TrackListProps> = ({currentTrackListHref}) => {
 	}
 
   useEffect(() => {
+		if(!currentTrackListHref) return;
+
     getPlaylistTracks(currentTrackListHref)
   }, [currentTrackListHref]);
 
@@ -31,7 +33,13 @@ const TrackList: React.FC<TrackListProps> = ({currentTrackListHref}) => {
 		return <li 
       key={item.track.id} 
       onClick={() => { 
-        dispatch({ type: 'spotifyPlayer/setCurrentSong', payload: { newSong: item.track.uri } }) 
+        dispatch({ type: 'spotifyPlayer/setCurrentSong', payload: { 
+					uri: item.track.uri,
+					id:  item.track.id,
+					name: item.track.name,
+					artist: item.track.artists[0].name
+				} 
+			}) 
       }}
     >
 			<p className='text-white'>{item.track.name} - {item.track.artists[0].name}</p>
