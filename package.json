@@ -28,7 +28,7 @@
     "@babel/preset-react": "^7.17.12",
     "@babel/preset-typescript": "^7.17.12",
     "@types/pixi.js": "^5.0.0",
-    "@types/react": "^18.0.9",
+    "@types/react": "17.0.39", 
     "@types/react-dom": "^18.0.5",
     "@types/spotify-web-playback-sdk": "^0.1.12",
     "babel-loader": "^8.2.5",
