@@ -11,7 +11,7 @@ export default class Game {
 
     private _app: PIXI.Application;
     private _player: Player;
-    private _lyricHandler = new LyricHandler(null);
+    private _lyricHandler = new LyricHandler();
     private _controller: Controller;
 
     constructor(){
@@ -34,14 +34,13 @@ export default class Game {
         document.body.appendChild(this._app.view);
 
         this._player.create();
-
-        this._lyricHandler.addLyric(stage);
         this._controller.initListeners(stage);
 
         stage.addChild(this._player.entity);
 
         this._app.ticker.add((delta: number) => {
             if(!store.getState().spotifyPlayer.playing) return;
+            this._lyricHandler.addLyric(stage);
             this._controller.update(delta);
             this._player.update(delta, stage);
             this.checkCollisions(delta)

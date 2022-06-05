@@ -10,7 +10,7 @@ const PlaySong: React.FC = () => {
   const playing = useSelector((state: RootState) => state.spotifyPlayer.playing);
   const device = usePlayerDevice();
   const playbackState = usePlaybackState();
-  const player = useSpotifyPlayer();
+  const spotifyPlayer = useSpotifyPlayer();
   const dispatch = useDispatch();
 
   const getNextSong = async() => {
@@ -45,10 +45,9 @@ const PlaySong: React.FC = () => {
   }, [currentSong.uri])
 
   useEffect(() => {
-    if(!player) return;
+    if(!spotifyPlayer) return;
 
-    if(!playing) player.pause()
-    else player.resume()
+    !playing ? spotifyPlayer.pause() : spotifyPlayer.resume()
   }, [playing])
 
   if (playbackState === null) return null;

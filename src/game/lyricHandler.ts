@@ -1,63 +1,55 @@
-import { Text } from 'pixi.js';
-import { TimestampedLyrics } from 'src/types';
 import Lyric from './entities/lyric';
+import { store } from '../stores/store';
+import { lyrics } from '../types';
 
 export default class TextHandler {
 
-    private _currentSongObj: TimestampedLyrics[];
-    private _currentLyrics: Lyric[] = [];
+    private _currentLyrics: Lyric[];
 
-    constructor(data: []) {
-        this._currentSongObj = data || [
-            {
-                "time": 19090,
-                "words": "What do you mean?"
-            },
-            {
-                "time": 22050,
-                "words": "I'm sorry by the way"
-            },
-            {
-                "time": 25790,
-                "words": "I'm never coming back down"
-            },
-            {
-                "time": 29440,
-                "words": "Can't you see?"
-            },
-            {
-                "time": 31590,
-                "words": "I could, but wouldn't stay"
-            },
-        ];
+    constructor() {
+        this._currentLyrics = []
     }
 
     public addLyric(stage: any): void {
-        const text = this._currentSongObj[2].words
+        const currentSongLyrics = store.getState().spotifyPlayer.currentSong.lyrics;
+        const currentTimestamp = store.getState().spotifyPlayer.currentTime;
 
+        if(!currentSongLyrics || currentSongLyrics.length < 1) return;
+
+        const nextLyricIndex = currentSongLyrics.findIndex((line: lyrics) => {
+            return line.seconds.toString() === currentTimestamp.toString()
+        });
+        if(nextLyricIndex === -1) return;
+
+        const currentLyricsMatchIndex = this._currentLyrics.findIndex((elm: Lyric) => {
+            return elm.text === currentSongLyrics[nextLyricIndex].lyrics
+        });
+        if(currentLyricsMatchIndex !== -1) return;
+
+        const lyricText = currentSongLyrics[nextLyricIndex].lyrics
+
+        this.poolLyrics(stage, lyricText);
+    }
+
+    private poolLyrics(stage: any, lyric: string): void {
         if(this._currentLyrics.length <= 20){
-            const nextLyric = new Lyric(text);
-
-            stage.addChild(nextLyric.entity);
-            this._currentLyrics.push(nextLyric)
+            const nextLyricSprite = new Lyric(lyric);
+            stage.addChild(nextLyricSprite.entity);
+            this._currentLyrics.push(nextLyricSprite)
         }
         else {
-            const firstDestroyedLyric = this._currentLyrics.findIndex((elm: Lyric) => { return elm.destroyed });
-
-            if(firstDestroyedLyric !== -1) {
-                const destroyedLyric = this._currentLyrics[firstDestroyedLyric];
-
-                destroyedLyric.reset(text);
-                stage.addChild(destroyedLyric.entity)
-            }
+            const firstDestroyedLyric = this._currentLyrics.findIndex((elm: Lyric) => { 
+                return elm.destroyed 
+            });
+            if(firstDestroyedLyric === -1) return;
+            
+            const destroyedLyric = this._currentLyrics[firstDestroyedLyric];
+            destroyedLyric.reset(lyric);
+            stage.addChild(destroyedLyric.entity)
         }
     }
 
     get lyrics(): Lyric[] {
         return this._currentLyrics
-    }
-
-    set currentSongObj(obj: TimestampedLyrics[]) {
-        this._currentSongObj = obj
     }
 }

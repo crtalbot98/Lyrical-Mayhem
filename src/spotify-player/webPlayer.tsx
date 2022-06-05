@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback } from 'react'
 import PlayBtn from './playBtn';
 import PlaySong from './playSong';
+import PlayerTimestamp from './playerTimestamp';
 import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
 import { useSelector } from 'react-redux';
 import { RootState } from '../stores/store';
@@ -17,6 +18,7 @@ const WebPlayer: React.FC = () => {
       connectOnInitialized={true}
     >
       <PlaySong/>
+      <PlayerTimestamp/>
     </WebPlaybackSDK>
     <PlayBtn/>
   </div>;

@@ -31,3 +31,8 @@ export type TimestampedLyrics = {
 export type State = {
     [key: string]: string | number | boolean
 }
+
+export type lyrics = {
+    seconds?: number,
+    lyrics: string
+  }
