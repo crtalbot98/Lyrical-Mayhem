@@ -2,8 +2,11 @@
 
 ## A game about destroying the lyrics of your favorite songs.
 
+### [link to back-end](https://github.com/crtalbot98/Lyrical-Mayhem-Server)
+
 ```
-To run the build - npm run webpack
-To start the server locally -  npm run start
-To build Typescript - npm run ts-build
+npm run start - bundles and starts the server.
+npm run serve - starts the server
+npm run build - builds the app into /build
+npm run build-all - build into /build and bundles
 ```
