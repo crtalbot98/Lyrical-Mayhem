@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { usePlayerDevice, usePlaybackState, useSpotifyPlayer } from 'react-spotify-web-playback-sdk';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../stores/store';
+import { fetchSpotifyData } from '../hooks/fetchSpotifyData';
 
 const PlaySong: React.FC = () => {
 
@@ -24,16 +25,17 @@ const PlaySong: React.FC = () => {
   }
 
   useEffect(() => {
-    getNextSong();
+    getNextSong()
   }, [currentSong.uri])
 
   useEffect(() => {
     if(!spotifyPlayer) return;
 
-    !playing ? spotifyPlayer.pause() : spotifyPlayer.resume()
+    if(!playing) spotifyPlayer.pause() ;
+    else spotifyPlayer.resume()
   }, [playing])
 
-  if (playbackState === null) return null;
+  if (!playbackState) return null;
   return <p>
     { playbackState.track_window.current_track.name }
   </p>

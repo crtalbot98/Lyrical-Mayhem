@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { RootState } from '../stores/store';
+import { RootState } from '../../stores/store';
+import { GenericObject } from '../../types';
 
-export const fetchSpotifyData = (url: string, dependencies: string[]) => {
+export const fetchSpotifyData = (url: string, dependencies: string[] | GenericObject[]) => {
   const aToken = useSelector((state: RootState) => state.auth.accessToken);
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
 
   const GetSpotifyData = async(): Promise<void> => {
-		if(!aToken) return;
+		if(!aToken || !url) return;
 
 		const data = await fetch(url, {
 			method: 'get',

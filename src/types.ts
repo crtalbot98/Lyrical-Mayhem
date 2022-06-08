@@ -1,38 +1,42 @@
 export type SimpleVector2D = {
-    x: number,
-    y: number
+  x: number,
+  y: number
 }
 
 export type Size = {
-    h: number,
-    w: number
+  h: number,
+  w: number
 }
 
 export type ControllerKeys = {
-    [key: string]: ControllerHandler
+  [key: string]: ControllerHandler
 }
 
 export type ControllerHandler = {
-    pressed: boolean,
-    move?: Function,
-    stop?: Function
+  pressed: boolean,
+  move?: Function,
+  stop?: Function
 }
 
 export type Velocity = {
-    x: number,
-    y: number
+  x: number,
+  y: number
 }
 
 export type TimestampedLyrics = {
-    time: number,
-    words: string
+  time: number,
+  words: string
 }
 
 export type State = {
-    [key: string]: string | number | boolean
+  [key: string]: string | number | boolean
 }
 
 export type lyrics = {
-    seconds?: number,
-    lyrics: string
-  }
+  seconds?: number,
+  lyrics: string
+}
+
+export type GenericObject = { 
+  [key: string]: any 
+}

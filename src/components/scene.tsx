@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import WebPlayer from './web-player/player';
 import Game from "../game/main";
 import { RootState } from '../stores/store';
-import PauseMenu from './pause-menu/menu';
+import Menu from './pause-menu/menu';
 
 const Scene: React.FC = () => {
   const game = useRef(null);
@@ -19,7 +19,14 @@ const Scene: React.FC = () => {
   
   return <>
 		<WebPlayer/>
-		{!playing ? <PauseMenu/> : null}
+		{
+			!playing ? 
+				<Menu>
+					<Menu.PlayList/>
+					<Menu.TrackList/>
+				</Menu> 
+			: null
+		}
   </>;
 };
 
