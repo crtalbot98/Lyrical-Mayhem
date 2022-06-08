@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../stores/store';
+import { RootState } from '../../stores/store';
 
 const PlayBtn: React.FC = () => {
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { usePlaybackState } from 'react-spotify-web-playback-sdk';
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../stores/store';
+import { RootState } from '../../stores/store';
 
 const PlayerTimestamp: React.FC = () => {
 
@@ -11,10 +11,10 @@ const PlayerTimestamp: React.FC = () => {
 
   useEffect(() => {
     if(!playbackState) return;
-
+    
     dispatch({ type: 'spotifyPlayer/setSongLengthAndCurrentTime', payload: {
       position: (playbackState.position / 1000).toFixed(0),
-      length: playbackState.duration
+      length: (playbackState.duration / 1000).toFixed(0)
     }});
   }, [playbackState])
 

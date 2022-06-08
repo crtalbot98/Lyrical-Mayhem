@@ -1,17 +1,15 @@
 import React, { useEffect } from 'react'
 import { usePlayerDevice, usePlaybackState, useSpotifyPlayer } from 'react-spotify-web-playback-sdk';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../stores/store';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../stores/store';
 
 const PlaySong: React.FC = () => {
 
-  const currentSong = useSelector((state: RootState) => state.spotifyPlayer.currentSong);
+  const { currentSong, playing } = useSelector((state: RootState) => state.spotifyPlayer);
   const aToken: string = useSelector((state: RootState) => state.auth.accessToken);
-  const playing = useSelector((state: RootState) => state.spotifyPlayer.playing);
   const device = usePlayerDevice();
   const playbackState = usePlaybackState();
   const spotifyPlayer = useSpotifyPlayer();
-  const dispatch = useDispatch();
 
   const getNextSong = async() => {
     if(!currentSong || !device) return;
@@ -25,23 +23,8 @@ const PlaySong: React.FC = () => {
 		});
   }
 
-  const getLyrics = async() => {
-    if(!currentSong || !device) return;
-
-    const newLyrics = await fetch(`http://localhost:8888/lyrics/getSongLyrics?songName=${currentSong.name}&artistName=${currentSong.artist}`, {
-			method: 'get'
-		});
-
-    const newLyricsJson = await newLyrics.json();
-
-    dispatch({ type: 'spotifyPlayer/setCurrentSongLyrics', payload: {
-      lyrics: newLyricsJson
-    }})
-  }
-
   useEffect(() => {
     getNextSong();
-    getLyrics()
   }, [currentSong.uri])
 
   useEffect(() => {

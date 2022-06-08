@@ -13,7 +13,8 @@ type currentSong = {
 interface PlayerState {
   playing: boolean,
 	currentSong: currentSong,
-  currentTime: number
+  currentTime: number,
+  error: string
 }
 
 interface SetCurrentSongAction {
@@ -43,10 +44,18 @@ interface SetSongLengthAndCurrentTime {
   type: string
 }
 
+interface SetPlayerError {
+  payload: {
+    error: string
+  },
+  type: string
+}
+
 const setPlaying = createAction('spotifyPlayer/setPlaying');
 const setCurrentSong = createAction('spotifyPlayer/setCurrentSong');
 const setCurrentSongLyrics = createAction('spotifyPlayer/setCurrentSongLyrics');
 const setSongLengthAndCurrentTime = createAction('spotifyPlayer/setSongLengthAndCurrentTime');
+const setPlayerError = createAction('spotifyPlayer/setPlayerError');
 
 const initialState = { 
 	playing: false,
@@ -59,6 +68,7 @@ const initialState = {
     length: 0
   },
   currentTime: 0,
+  error: ''
 } as PlayerState;
  
 const spotifyPlayerReducer = createReducer(initialState, (builder) => {
@@ -76,6 +86,9 @@ const spotifyPlayerReducer = createReducer(initialState, (builder) => {
       .addCase(setSongLengthAndCurrentTime, (state, action: SetSongLengthAndCurrentTime) => {
 				state.currentTime = action.payload.position;
         state.currentSong.length = action.payload.length;
+		  })
+      .addCase(setPlayerError, (state, action: SetPlayerError) => {
+				state.error = action.payload.error;
 		  })
 });
 

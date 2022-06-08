@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../stores/store';
+import { RootState } from '../../stores/store';
 
 type TrackListProps = {
-  currentTrackListHref: string
+  trackListHref: string,
 }
 
-const TrackList: React.FC<TrackListProps> = ({currentTrackListHref}) => {
+const TrackList: React.FC<TrackListProps> = ({trackListHref}) => {
 
 	const [trackLists, setTrackLists]= useState([]);
 	const aToken = useSelector((state: RootState) => state.auth.accessToken);
   const dispatch = useDispatch();
 
-	const getPlaylistTracks = async(href: string) => {
-		const playlistTracks = await fetch(href, {
+	const getPlaylistTracks = async() => {
+		const playlistTracks = await fetch(trackListHref, {
 			method: 'get',
       headers: new Headers({
         'Authorization': `Bearer ${aToken}`
@@ -22,12 +22,6 @@ const TrackList: React.FC<TrackListProps> = ({currentTrackListHref}) => {
 		const tracksJson = await playlistTracks.json();
 		setTrackLists(tracksJson.items);
 	}
-
-  useEffect(() => {
-		if(!currentTrackListHref) return;
-
-    getPlaylistTracks(currentTrackListHref)
-  }, [currentTrackListHref]);
 
 	const trackListItems = trackLists.map((item) => {
 		return <li 
@@ -38,17 +32,16 @@ const TrackList: React.FC<TrackListProps> = ({currentTrackListHref}) => {
 					id:  item.track.id,
 					name: item.track.name,
 					artist: item.track.artists[0].name
-				} 
-			}) 
+				}}) 
       }}
     >
 			<p className='text-white'>{item.track.name} - {item.track.artists[0].name}</p>
 		</li>
 	});
 
-  return <ul className='overflow-y-auto h-96'>
-			{trackListItems}
-		</ul>
+  return <ul className={`overflow-y-auto h-96`}>
+		{trackListItems}
+	</ul>
 };
 
 export default TrackList;

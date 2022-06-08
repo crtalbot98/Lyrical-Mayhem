@@ -1,5 +1,6 @@
 import Entity from "./entity";
 import { Text } from "pixi.js";
+import { lyrics } from '../../types';
 
 export default class Lyric extends Entity {
 
@@ -20,7 +21,7 @@ export default class Lyric extends Entity {
         this._entity.position.y += this._speed * delta;
     }
 
-    public reset(text: string): void {
+    public reset(text: string | lyrics): void {
         this._entity.text = text;
         this.initialPosition = { x: window.innerWidth / 2, y: 100 }
     }

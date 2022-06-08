@@ -1,5 +1,5 @@
 import React, { ReactNode, FC } from 'react'
-import { store } from '../stores/store'
+import { store } from '../../stores/store'
 
 type FullScreenModalProps = {
 	children: ReactNode,

@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import WebPlayer from './webPlayer';
+import WebPlayer from './web-player/player';
 import Game from "../game/main";
 import { RootState } from '../stores/store';
-import PlayList from './playlist';
+import PauseMenu from './pause-menu/menu';
 
 const Scene: React.FC = () => {
   const game = useRef(null);
@@ -19,7 +19,7 @@ const Scene: React.FC = () => {
   
   return <>
 		<WebPlayer/>
-		{!playing ? <PlayList/> : null}
+		{!playing ? <PauseMenu/> : null}
   </>;
 };
 

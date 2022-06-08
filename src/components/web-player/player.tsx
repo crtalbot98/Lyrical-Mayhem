@@ -2,11 +2,12 @@ import React, { useEffect, useCallback } from 'react'
 import PlayBtn from './playBtn';
 import PlaySong from './playSong';
 import PlayerTimestamp from './playerTimestamp';
+import PlayerLyrics from './lyrics';
 import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
 import { useSelector } from 'react-redux';
-import { RootState } from '../stores/store';
+import { RootState } from '../../stores/store';
 
-const WebPlayer: React.FC = () => {
+const player: React.FC = () => {
 
   const aToken: string = useSelector((state: RootState) => state.auth.accessToken);
 
@@ -19,9 +20,10 @@ const WebPlayer: React.FC = () => {
     >
       <PlaySong/>
       <PlayerTimestamp/>
+      <PlayerLyrics/>
     </WebPlaybackSDK>
     <PlayBtn/>
   </div>;
 };
 
-export default WebPlayer;
+export default player;
