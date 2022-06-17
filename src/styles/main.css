@@ -10,7 +10,7 @@
 	}
 
 	h2 {
-		@apply text-4xl font-semibold antialiased tracking-wide;
+		@apply text-5xl font-semibold antialiased tracking-wide;
 	}
 
 	p, a {
