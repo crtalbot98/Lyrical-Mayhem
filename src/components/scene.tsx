@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import WebPlayer from './web-player/player';
+import WebPlayer from './web-player/webPlayer';
 import Game from "../game/main";
 import { RootState } from '../stores/store';
 import Menu from './pause-menu/menu';
@@ -15,13 +15,14 @@ const Scene: React.FC = () => {
 
 		game.current = new Game();
 		game.current.init()
-	}, [loggedIn]);
+	}, []);
   
   return <>
 		<WebPlayer/>
 		{
 			!playing ? 
 				<Menu>
+					<h2 className='text-lightText'>Your Playlists</h2>
 					<Menu.PlayList/>
 					<Menu.TrackList/>
 				</Menu> 
