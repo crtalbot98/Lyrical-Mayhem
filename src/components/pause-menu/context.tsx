@@ -1,17 +1,17 @@
 import { createContext, useContext } from 'react';
 
 export type MenuContextType = {
-	currentTrackListHref: string, 
-	setCurrentTrackListHref: React.Dispatch<React.SetStateAction<string>>,
-  currentPlaylistName: string, 
-	setCurrentPlaylistName: React.Dispatch<React.SetStateAction<string>>
+	trackList: any[], 
+	setTrackList: React.Dispatch<React.SetStateAction<any[]>>,
+  playlists: any[], 
+	setPlaylists: React.Dispatch<React.SetStateAction<any[]>>
 }
 
 export const MenuContext = createContext<MenuContextType>({
-  currentTrackListHref: '', 
-	setCurrentTrackListHref: () => {},
-	currentPlaylistName: '',
-	setCurrentPlaylistName: () => {}
+  trackList: [], 
+	setTrackList: () => {},
+	playlists: [],
+	setPlaylists: () => {}
 });
 
 export const useMenuContext = () => {

@@ -2,29 +2,25 @@ import { createReducer, createAction } from '@reduxjs/toolkit'
 import { lyrics } from '../../types';
 
 type currentSong = {
-  id: string,
-  artist: string,
-  name: string,
-  uri: string,
   lyrics?: lyrics[],
   length?: number
 }
 
-interface PlayerState {
-  playing: boolean,
-	currentSong: currentSong,
+type playerDetails = {
   currentTime: number,
-  error: string
+  error: string,
+  deviceId: string
 }
 
-interface SetCurrentSongAction {
+interface PlayerState {
+  playing: boolean,
+	currentSong?: currentSong,
+  playerDetails?: playerDetails
+}
+
+interface SetPlaying {
   payload: {
-    id: string,
-    artist: string,
-    name: string,
-    uri: string,
-    lyrics?: lyrics[],
-    length?: number
+    playing: boolean
   },
   type: string
 }
@@ -51,44 +47,48 @@ interface SetPlayerError {
   type: string
 }
 
+interface SetDeviceId {
+  payload: {
+    deviceId: string
+  },
+  type: string
+}
+
 const setPlaying = createAction('spotifyPlayer/setPlaying');
-const setCurrentSong = createAction('spotifyPlayer/setCurrentSong');
 const setCurrentSongLyrics = createAction('spotifyPlayer/setCurrentSongLyrics');
 const setSongLengthAndCurrentTime = createAction('spotifyPlayer/setSongLengthAndCurrentTime');
 const setPlayerError = createAction('spotifyPlayer/setPlayerError');
+const setDeviceId = createAction('spotifyPlayer/setDeviceId')
 
 const initialState = { 
 	playing: false,
   currentSong: {
-    id: '',
-    artist: '',
-    name: '',
-    uri: '',
     lyrics: [],
     length: 0
   },
-  currentTime: 0,
-  error: ''
+  playerDetails: {
+    currentTime: 0,
+  }
 } as PlayerState;
  
 const spotifyPlayerReducer = createReducer(initialState, (builder) => {
   builder
-      .addCase(setPlaying, (state) => {
-        state.playing = !state.playing
+      .addCase(setPlaying, (state, action: SetPlaying) => {
+        state.playing = action.payload.playing
       })
-			.addCase(setCurrentSong, (state, action: SetCurrentSongAction) => {
-				state.currentSong = { ...action.payload }
-		  })
       .addCase(setCurrentSongLyrics, (state, action: SetCurrentSongLyricsAction) => {
 				state.currentSong.lyrics = action.payload.lyrics;
         state.playing = true
 		  })
       .addCase(setSongLengthAndCurrentTime, (state, action: SetSongLengthAndCurrentTime) => {
-				state.currentTime = action.payload.position;
+				state.playerDetails.currentTime = action.payload.position;
         state.currentSong.length = action.payload.length;
 		  })
       .addCase(setPlayerError, (state, action: SetPlayerError) => {
-				state.error = action.payload.error;
+				state.playerDetails.error = action.payload.error;
+		  })
+      .addCase(setDeviceId, (state, action: SetDeviceId) => {
+				state.playerDetails.deviceId = action.payload.deviceId;
 		  })
 });
 
