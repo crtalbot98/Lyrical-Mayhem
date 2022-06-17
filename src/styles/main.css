@@ -9,6 +9,10 @@
 		@apply text-6xl font-semibold antialiased tracking-wide;
 	}
 
+	h2 {
+		@apply text-5xl font-semibold antialiased tracking-wide;
+	}
+
 	p, a {
 		@apply text-2xl font-medium text-lightText;
 	}

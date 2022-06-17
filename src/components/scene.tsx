@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux';
-import WebPlayer from './webPlayer';
+import WebPlayer from './web-player/webPlayer';
 import Game from "../game/main";
 import { RootState } from '../stores/store';
-import PlayList from './playlist';
+import Menu from './pause-menu/menu';
 
 const Scene: React.FC = () => {
   const game = useRef(null);
@@ -15,11 +15,19 @@ const Scene: React.FC = () => {
 
 		game.current = new Game();
 		game.current.init()
-	}, [loggedIn]);
+	}, []);
   
   return <>
 		<WebPlayer/>
-		{!playing ? <PlayList/> : null}
+		{
+			!playing ? 
+				<Menu>
+					<h2 className='text-lightText'>Your Playlists</h2>
+					<Menu.PlayList/>
+					<Menu.TrackList/>
+				</Menu> 
+			: null
+		}
   </>;
 };
 

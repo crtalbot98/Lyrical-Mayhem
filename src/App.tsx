@@ -1,8 +1,8 @@
 import React from 'react'
-import LoginModal from './login/modal';
+import LoginModal from './components/login/modal';
 import './styles/main.css';
 import { useSelector } from 'react-redux';
-import Scene from './spotify-player/scene';
+import Scene from './components/scene';
 import { RootState } from './stores/store';
 
 const App: React.FC = () => {
