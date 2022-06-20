@@ -11,8 +11,8 @@ export default class Lyric extends Entity {
     constructor(text: string) {
         super({ x: window.innerWidth / 2, y: 100 }, 0xBBCC3D, { h: 50, w: 40 });
         this._speed = 2;
-        this._entity = new Text(text, this._fontStyles);
-        this._text = text
+        this._text = text;
+        this._entity = new Text(this._text, this._fontStyles)
     }
 
     public update(delta: number) {

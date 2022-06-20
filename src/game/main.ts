@@ -62,4 +62,8 @@ export default class Game {
             }
         });
     }
+
+    get lyricHandler(): LyricHandler {
+        return this._lyricHandler
+    }
 }

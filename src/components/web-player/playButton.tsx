@@ -11,8 +11,9 @@ const PlayBtn: React.FC = () => {
   const updatePlayState = async(evt: MouseEvent<HTMLButtonElement>): Promise<void> => {
     evt.preventDefault();
     
-    dispatch({ type: 'spotifyPlayer/setPlaying', payload: { playing: !playing } });
-    !playing ? spotifyPlayer.pause() : spotifyPlayer.resume()
+    const newPlayingState = !playing;
+    dispatch({ type: 'spotifyPlayer/setPlaying', payload: { playing: newPlayingState } });
+    !newPlayingState ? spotifyPlayer.pause() : spotifyPlayer.resume()
   }
 
   return <button 

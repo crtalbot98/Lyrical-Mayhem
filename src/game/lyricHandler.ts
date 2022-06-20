@@ -1,67 +1,77 @@
 import Lyric from './entities/lyric';
 import { store } from '../stores/store';
-import { lyrics } from '../types';
+import { songLyrics } from '../stores/reducers/spotify-player-reducer';
+
+enum LyricTypes {
+	Timestamped,
+	NoTimestamp,
+	None
+}
 
 export default class TextHandler {
 
     private _currentLyrics: Lyric[];
+		private _currentSongLyrics: any[];
+		private _currentSongLyricsType: LyricTypes;
+		private _currentTimestamp: number;
+		private _currentSongLength: number;
+		private _currentSongNameAndArtist: { name: string, artist: string };
 
     constructor() {
-      this._currentLyrics = []
+      this._currentLyrics = [];
+			this._currentSongLyrics = [];
+			store.subscribe(() => { this.handleStateUpdates() })
     }
 
     public addLyric(stage: any): void {
-      const currentSongLyrics = store.getState().spotifyPlayer.currentSong.lyrics;
-			let nextLyricText: string | lyrics;
+			if(this._currentSongLyrics.length < 1) return;
 
-      if(!currentSongLyrics || currentSongLyrics.length < 1){
-				return
+			let nextLyricText: string;
+			
+			if(this._currentSongLyricsType === LyricTypes.Timestamped) {
+				nextLyricText = this.getLyricsWithTimestamp()
 			}
-			else if(currentSongLyrics[0].seconds) {
-				nextLyricText = this.getLyricsWithTimestamp(currentSongLyrics)
-			}
-			else if(typeof currentSongLyrics[0] === 'string') {
-				nextLyricText = this.getLyricsWithoutTimestamp(currentSongLyrics)
+			else if(this._currentSongLyricsType === LyricTypes.NoTimestamp) {
+				nextLyricText = this.getLyricsWithoutTimestamp()
 			}
 
-      this.poolLyrics(stage, nextLyricText);
+      if(nextLyricText) this.poolLyrics(stage, nextLyricText);
     }
 
-		private getLyricsWithTimestamp(currentSongLyrics: lyrics[]): string {
-			const currentTimestamp = store.getState().spotifyPlayer.currentTime;
-
-			const nextLyricIndex = currentSongLyrics.findIndex((line: lyrics) => {
-				return line.seconds.toString() === currentTimestamp.toString()
+		private getLyricsWithTimestamp(): string {
+			const nextLyricIndex = this._currentSongLyrics.findIndex((elm: any) => {
+				return elm.seconds.toString() === this._currentTimestamp.toString()
 			});
 			if(nextLyricIndex === -1) return;
+			console.log(nextLyricIndex)
 
 			const currentLyricsMatchIndex = this._currentLyrics.findIndex((elm: Lyric) => {
-					return elm.text === currentSongLyrics[nextLyricIndex].lyrics
+				return elm.text === this._currentSongLyrics[nextLyricIndex]?.lyric
 			});
 			if(currentLyricsMatchIndex !== -1) return;
 
-			return currentSongLyrics[nextLyricIndex].lyrics
+			return this._currentSongLyrics[nextLyricIndex]?.lyric
 		}
 
-		private getLyricsWithoutTimestamp(currentSongLyrics: lyrics[]): lyrics {
-			const lyricLength = currentSongLyrics.length;
-			const currentSongLength = store.getState().spotifyPlayer.currentSong.length;
-			const currentPlayerTime = store.getState().spotifyPlayer.currentTime;
-			const lyricToTimeAvg = Math.floor(currentSongLength / lyricLength);
+		private getLyricsWithoutTimestamp(): string {
+			const lyricLength = this._currentSongLyrics.length;
+			const lyricToTimeAvg = Math.floor(this._currentSongLength / lyricLength);
+	
+			if(this._currentTimestamp % lyricToTimeAvg === 0) {
+				const nextPossibleLyric = this._currentSongLyrics[this._currentSongLength / lyricToTimeAvg].toString();
 
-			if(currentPlayerTime % lyricToTimeAvg === 0) {
-				const currentLyricsMatchIndex = this._currentLyrics.findIndex((elm: Lyric) => {
-					return elm.text === currentSongLyrics[currentPlayerTime / lyricToTimeAvg].toString()
+				const currentLyricsMatchIndex = this._currentLyrics.findIndex(({text}) => {
+					return text === nextPossibleLyric
 				});
 				if(currentLyricsMatchIndex !== -1) return;
-				console.log(currentSongLyrics[currentPlayerTime / lyricToTimeAvg])
-				return currentSongLyrics[currentPlayerTime / lyricToTimeAvg]
+
+				return nextPossibleLyric
 			}
 		}
 
-    private poolLyrics(stage: any, lyric: string | lyrics): void {
+    private poolLyrics(stage: any, lyric: string): void {
       if(this._currentLyrics.length <= 20){
-          const nextLyricSprite = new Lyric(lyric.toString());
+          const nextLyricSprite = new Lyric(lyric);
           stage.addChild(nextLyricSprite.entity);
           this._currentLyrics.push(nextLyricSprite)
       }
@@ -76,6 +86,21 @@ export default class TextHandler {
           stage.addChild(destroyedLyric.entity)
       }
     }
+
+		private handleStateUpdates(): void {
+			const { lyrics, name, artist, length } = store.getState().spotifyPlayer.currentSong;
+			let nextTimestamp = store.getState().spotifyPlayer.playerDetails.currentTime;
+			nextTimestamp = Number(nextTimestamp);
+
+			if(this._currentSongNameAndArtist?.name !== name && this._currentSongNameAndArtist?.artist !== artist) {
+				this._currentSongNameAndArtist = { name, artist };
+				this._currentSongLyrics = lyrics;
+				this._currentSongLength = length;
+				this._currentSongLyricsType = typeof this._currentSongLyrics[0] === 'string' ? LyricTypes.NoTimestamp : LyricTypes.Timestamped;
+			}
+
+			if(this._currentTimestamp !== nextTimestamp) this._currentTimestamp = nextTimestamp
+		}
 
     get lyrics(): Lyric[] {
       return this._currentLyrics

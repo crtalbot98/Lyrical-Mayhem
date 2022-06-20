@@ -3,15 +3,16 @@ import { GenericObject } from '../../types';
 import { useMenuContext } from './context';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../stores/store';
+import { usePlayerDevice } from 'react-spotify-web-playback-sdk';
 
 const Tracklist: React.FC = () => {
 	const aToken = useSelector((state: RootState) => state.auth.accessToken);
-	const deviceId = useSelector((state: RootState) => state.spotifyPlayer.playerDetails.deviceId);
+	const device = usePlayerDevice();
 	const context = useMenuContext();
 	const dispatch = useDispatch();
 
 	const playTrack = async(uri: string) => {
-		await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+		await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device.device_id}`, {
 			method: 'put',
 			body: JSON.stringify({ uris: [uri] }),
 			headers: new Headers({
@@ -24,8 +25,18 @@ const Tracklist: React.FC = () => {
     const newLyrics = await fetch(`http://localhost:8888/lyrics/getSongLyrics?songName=${songName}&artistName=${artist}`);
     const newLyricsJson = await newLyrics.json();
 
+		if(newLyricsJson.error) {
+			dispatch({ type: 'spotifyPlayer/setPlayerError', payload: {
+				error: newLyricsJson.error
+			}});
+
+			return
+		}
+
     dispatch({ type: 'spotifyPlayer/setCurrentSongLyrics', payload: {
-      lyrics: newLyricsJson
+      lyrics: newLyricsJson.data,
+			name: songName,
+			artist: artist
     }})
   }
 

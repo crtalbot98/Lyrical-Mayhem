@@ -34,8 +34,8 @@ export type State = {
 
 export type lyrics = {
   seconds?: number,
-  lyrics: string
-}
+  lyric?: string
+} | string
 
 export type GenericObject = { 
   [key: string]: any 
