@@ -1,32 +1,39 @@
-import Entity from "./entity";
 import { Text } from "pixi.js";
-import { lyrics } from '../../types';
+import { SimpleVector2D } from "src/types";
 
-export default class Lyric extends Entity {
+export default class Lyric {
 
-    private _fontStyles: {} = { fontFamily : 'Arial', fontSize: 24, fill : 0x00000, align : 'center' };
-    private _speed: number = 2;
+    private _fontStyles: {} = { fontFamily : 'Arial', fontSize: 24, fill : 0xDAF7DC, align : 'center' };
+    private _speed: number;
     private _text: string;
+    _entity: Text;
+    _destroyed: boolean;
 
-    constructor(text: string) {
-        super({ x: window.innerWidth / 2, y: 100 }, 0xBBCC3D, { h: 50, w: 40 });
+    constructor(text: string, position: SimpleVector2D) {
+        this._destroyed = false;
         this._speed = 2;
         this._text = text;
         this._entity = new Text(this._text, this._fontStyles)
+        this._entity.position.x = position.x;
+        this._entity.position.y = position.y
     }
 
-    public update(delta: number) {
+    public update(delta: number): void {
         if(this._destroyed) return;
-
         this._entity.position.y += this._speed * delta;
     }
 
-    public reset(text: string | lyrics): void {
-        this._entity.text = text;
-        this.initialPosition = { x: window.innerWidth / 2, y: 100 }
+    public reset(position: SimpleVector2D): void {
+        this._destroyed = false;
+        this._entity.position.x = position.x;
+        this._entity.position.y = position.y
     }
 
     get text(): string {
         return this._text
+    }
+
+    set text(text: string) {
+        this._text = text
     }
 }
