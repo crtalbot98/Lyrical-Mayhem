@@ -11,14 +11,21 @@ const Tracklist: React.FC = () => {
 	const context = useMenuContext();
 	const dispatch = useDispatch();
 
-	const playTrack = async(uri: string) => {
+	const playAndSetTrack = async(track: GenericObject) => {
 		await fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device.device_id}`, {
 			method: 'put',
-			body: JSON.stringify({ uris: [uri] }),
+			body: JSON.stringify({ uris: [track.uri] }),
 			headers: new Headers({
 				'Authorization': `Bearer ${aToken}`
 			})
 		});
+
+		dispatch({ type: 'spotifyPlayer/setSongData', payload: {
+			id: track.id,
+			name: track.name,
+			artist: track.artists[0].name,
+			length: Number((track.duration_ms / 1000).toFixed(0))
+		}})
 	}
 
 	const getLyrics = async(songName: string, artist: string) => {
@@ -29,22 +36,18 @@ const Tracklist: React.FC = () => {
 			dispatch({ type: 'spotifyPlayer/setPlayerError', payload: {
 				error: newLyricsJson.error
 			}});
-
-			return
 		}
 
-    dispatch({ type: 'spotifyPlayer/setCurrentSongLyrics', payload: {
-      lyrics: newLyricsJson.data,
-			name: songName,
-			artist: artist
-    }})
+    dispatch({ type: 'spotifyPlayer/setSongLyrics', payload: {
+      lyrics: newLyricsJson.data || []
+    }});
   }
 
 	const tracklistItems = context.trackList.map((item: GenericObject) => {
 		return <li 
       key={item.track.id} 
       onClick={() => { 
-				playTrack(item.track.uri);
+				playAndSetTrack(item.track);
 				getLyrics(item.track.name, item.track.artists[0].name)
       }}
     >

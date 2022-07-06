@@ -9,10 +9,9 @@ const PlayerTimestamp: React.FC = () => {
   useEffect(() => {
     if(!playbackState) return;
     
-    dispatch({ type: 'spotifyPlayer/setSongLengthAndCurrentTime', payload: {
-      position: Number(playbackState.position / 1000).toFixed(0),
-      length: Number(playbackState.duration / 1000).toFixed(0)
-    }});
+    dispatch({ type: 'spotifyPlayer/setCurrentTime', payload: {
+      position: Number((playbackState.position / 1000).toFixed(0))
+    }})
   }, [playbackState])
 
   return <div>

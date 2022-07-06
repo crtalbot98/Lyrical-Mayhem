@@ -14,20 +14,19 @@ const PlayList: React.FC = () => {
 			return currentPlaylistId === playlist.id
 		});
 
-		if(index !== -1) {
-			const playlist = context.playlists[index];
-			return <>
-				<button onClick={() => { setCurrentPlaylistId('') }}>
-					<img className='text-lightText' src='./arrow-narrow-left.svg' alt="Return to playlist selection" width="24" height="24"/>
-				</button>
-				<img className='m-auto rounded-sm h-full' height='250' width='250' src={playlist.images[0].url} alt={`${playlist.name} image`} />
-				<h2 className='text-lightText w-full text-center self-center'>
-					{playlist.name}
-				</h2>
-			</>
-		}
+		if(index === -1) return null;
 
-		return null
+		const playlist = context.playlists[index];
+
+		return <>
+			<button onClick={() => { setCurrentPlaylistId('') }}>
+				<img className='text-lightText' src='./arrow-narrow-left.svg' alt="Return to playlist selection" width="24" height="24"/>
+			</button>
+			<img className='m-auto rounded-sm h-full' height='250' width='250' src={playlist.images[0].url} alt={`${playlist.name} image`} />
+			<h2 className='text-lightText w-full text-center self-center'>
+				{playlist.name}
+			</h2>
+		</>
 	}
 
 	const getPlaylists = async() => {
