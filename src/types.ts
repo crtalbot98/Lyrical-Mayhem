@@ -8,16 +8,6 @@ export type Size = {
   w: number
 }
 
-export type ControllerKeys = {
-  [key: string]: ControllerHandler
-}
-
-export type ControllerHandler = {
-  pressed: boolean,
-  move?: Function,
-  stop?: Function
-}
-
 export type Velocity = {
   x: number,
   y: number
@@ -34,8 +24,8 @@ export type State = {
 
 export type lyrics = {
   seconds?: number,
-  lyrics: string
-}
+  lyric?: string
+} | string
 
 export type GenericObject = { 
   [key: string]: any 

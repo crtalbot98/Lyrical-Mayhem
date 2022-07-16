@@ -1,95 +1,128 @@
 import { createReducer, createAction } from '@reduxjs/toolkit'
-import { lyrics } from '../../types';
 
-type currentSong = {
-  lyrics?: lyrics[],
-  length?: number
+export type lyricsWithTimestamp = { seconds: number, lyrics: string };
+
+export type songLyrics = lyricsWithTimestamp[] | string[];
+
+export type Song = { 
+  id: string, 
+  lyrics: songLyrics,
+  lyricsType: LyricTypes,
+  length: number, 
+  name: string, 
+  artist: string 
+};
+
+export type playerDetails = { currentTime: number, error: string };
+
+export enum LyricTypes {
+	Timestamped,
+	NoTimestamp,
+	None
 }
 
-type playerDetails = {
-  currentTime: number,
-  error: string,
-  deviceId: string
+export interface PlayerState {
+  playing: boolean;
+	song: Song;
+  playerDetails: playerDetails;
 }
 
-interface PlayerState {
-  playing: boolean,
-	currentSong?: currentSong,
-  playerDetails?: playerDetails
-}
-
-interface SetPlaying {
+export interface SetPlaying {
   payload: {
-    playing: boolean
+    playing: boolean;
+  },
+  type: string;
+}
+
+export interface SetSongLyricsAction {
+  payload: {
+    id: string,
+    lyrics: songLyrics;
+    name?: string;
+    artist?: string
+  },
+  type: string;
+}
+
+export interface SetCurrentTime {
+  payload: {
+    position: number;
+  },
+  type: string;
+}
+
+export interface SetSongData {
+  payload: {
+    id: string,
+    length: number,
+    name: string,
+    artist: string
   },
   type: string
 }
 
-interface SetCurrentSongLyricsAction {
+export interface SetPlayerError {
   payload: {
-    lyrics?: lyrics[]
+    error: string;
   },
-  type: string
-}
-
-interface SetSongLengthAndCurrentTime {
-  payload: {
-    position: number,
-    length: number
-  },
-  type: string
-}
-
-interface SetPlayerError {
-  payload: {
-    error: string
-  },
-  type: string
-}
-
-interface SetDeviceId {
-  payload: {
-    deviceId: string
-  },
-  type: string
+  type: string;
 }
 
 const setPlaying = createAction('spotifyPlayer/setPlaying');
-const setCurrentSongLyrics = createAction('spotifyPlayer/setCurrentSongLyrics');
-const setSongLengthAndCurrentTime = createAction('spotifyPlayer/setSongLengthAndCurrentTime');
+const setCurrentSongLyrics = createAction('spotifyPlayer/setSongLyrics');
+const setCurrentTime = createAction('spotifyPlayer/setCurrentTime');
+const setSongData = createAction('spotifyPlayer/setSongData');
 const setPlayerError = createAction('spotifyPlayer/setPlayerError');
-const setDeviceId = createAction('spotifyPlayer/setDeviceId')
 
 const initialState = { 
 	playing: false,
-  currentSong: {
+  song: {
+    id: '',
     lyrics: [],
-    length: 0
+    lyricsType: LyricTypes.None,
+    length: 0,
+    name: '',
+    artist: ''
   },
   playerDetails: {
     currentTime: 0,
+    error: ''
   }
 } as PlayerState;
  
 const spotifyPlayerReducer = createReducer(initialState, (builder) => {
   builder
-      .addCase(setPlaying, (state, action: SetPlaying) => {
-        state.playing = action.payload.playing
-      })
-      .addCase(setCurrentSongLyrics, (state, action: SetCurrentSongLyricsAction) => {
-				state.currentSong.lyrics = action.payload.lyrics;
-        state.playing = true
-		  })
-      .addCase(setSongLengthAndCurrentTime, (state, action: SetSongLengthAndCurrentTime) => {
-				state.playerDetails.currentTime = action.payload.position;
-        state.currentSong.length = action.payload.length;
-		  })
-      .addCase(setPlayerError, (state, action: SetPlayerError) => {
-				state.playerDetails.error = action.payload.error;
-		  })
-      .addCase(setDeviceId, (state, action: SetDeviceId) => {
-				state.playerDetails.deviceId = action.payload.deviceId;
-		  })
+    .addCase(setPlaying, (state, action: SetPlaying) => {
+      state.playing = action.payload.playing
+    })
+    .addCase(setCurrentSongLyrics, (state, action: SetSongLyricsAction) => {
+      state.playerDetails.error = '';
+      state.song.lyrics = action.payload.lyrics;
+
+      if(action.payload.lyrics.length < 1) state.song.lyricsType = LyricTypes.None
+      else state.song.lyricsType = (action.payload.lyrics[0] as lyricsWithTimestamp)?.seconds ? 
+        LyricTypes.Timestamped : 
+        LyricTypes.NoTimestamp   
+
+      state.playing = true
+		})
+    .addCase(setCurrentTime, (state, action: SetCurrentTime) => {
+			state.playerDetails.currentTime = action.payload.position;
+		})
+    .addCase(setSongData, (state, action: SetSongData) => {
+      state.song = {
+        id: action.payload.id,
+        name: action.payload.name,
+        artist: action.payload.artist,
+        length: action.payload.length,
+        lyrics: state.song.lyrics,
+        lyricsType: state.song.lyricsType
+      }
+    })
+    .addCase(setPlayerError, (state, action: SetPlayerError) => {
+			state.playerDetails.error = action.payload.error;
+      state.song.lyricsType = LyricTypes.None
+		})
 });
 
 export default spotifyPlayerReducer

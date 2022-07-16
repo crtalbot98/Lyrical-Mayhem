@@ -11,7 +11,7 @@
       "skipLibCheck": true,
       "jsx": "react",
       "esModuleInterop": true,
-      "module": "commonjs"
+      "module": "commonjs",
     },
     "include": ["src/**/*",],
     "exclude": ["**/*.spec.ts"]

@@ -1,37 +1,64 @@
 import { Texture, Sprite } from 'pixi.js';
-import Entity from './entity';
 import Vector2D from '../vector2D';
-import { SimpleVector2D } from 'src/types';
 import Bullet from './bullet';
+import PlayerController from '../playerController';
+import ObjectPool from '../objectHandlers/objectPool';
+import { PixiApp } from '../main';
 
-export default class Player extends Entity {
+export default class Player {
 
-    protected _position: Vector2D;
-    private _playerBullets: Bullet[]= [];
+  _entity: Sprite;
+  _direction: Vector2D;
+  _maxSpeed: number;
+  _speed: number;
+  _acceleration: number;
+  _deceleration: number;
+	_bullets: Bullet[];
+	private _bulletPool: ObjectPool;
+	private _controller: PlayerController;
 
-    constructor(initialPosition: SimpleVector2D) {
-        super(initialPosition, 0x29A600, { h: 67, w: 77 });
+  constructor(controller: PlayerController) {
+    this._direction = new Vector2D();
+    this._maxSpeed = 10;
+    this._speed = 0;
+    this._acceleration = 0.50;
+    this._deceleration = 1;
+    this._controller = controller;
+		this._bulletPool = new ObjectPool();
+		this._bullets = [];
+    this._entity = new Sprite(Texture.from('player-ship.png'));
+    this._entity.position.set(window.innerWidth / 2, window.innerHeight / 2);
+    this._entity.width = 55;
+    this._entity.height = 55;
+    this._entity.anchor.set(0.5)
+	}
+
+  public create(): void{
+    PixiApp.stage.addChild(this._entity);
+    this._controller.initListeners()
+  }
+
+  public update(delta: number): void {
+    this._controller.update(this, delta);
+
+		if(this._bullets.length < 1) return;
+
+    for(let i = this._bullets.length-1; i >= 0; i--) {
+      const bullet = this._bullets[i];
+      bullet.update(delta);
+      if(bullet._destroyed) {
+				this._bulletPool.addToPool(bullet);
+				this._bullets.splice(i, 1)
+			}
     }
+  }
 
-    public create(): void{
-        const playerShip = Texture.from('player-ship.png');
+	reset(): void {
+		this._entity.position.x = window.innerWidth / 2;
+		this._entity.position.y = window.innerHeight / 2
+	}
 
-        this._entity = new Sprite(playerShip);
-
-        this._entity.position.set(this._initialPosition.x, this._initialPosition.y);
-        this._entity.width = this._size.w;
-        this._entity.height = this._size.h;
-        this._entity.anchor.set(0.5);
-    }
-
-    public update(delta: number, stage: any): void {
-        this._playerBullets.forEach((bullet: Bullet) => {
-            if(bullet.destroyed) stage.removeChild(bullet.entity);
-            else bullet.update(delta);
-        })
-    }
-
-    get bullets(): Bullet[] {
-        return this._playerBullets
-    }
+  get bulletPool(): ObjectPool {
+    return this._bulletPool
+  }
 }
