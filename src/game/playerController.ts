@@ -1,92 +1,103 @@
-import { ControllerKeys } from "src/types";
 import Player from "./entities/player";
+import Bullet from "./entities/bullet";
+import { PixiApp } from "./main";
+import { debounce } from "./utils/time";
+
+export type ControllerKeys = {
+  [key: string]: ControllerHandler
+}
+
+export type ControllerHandler = {
+  pressed: boolean,
+  evt: Function
+}
 
 export default class PlayerController{
     
   private _keys: ControllerKeys;
 
   constructor() {
+    const debouncedEmitBullet = debounce(this.emitBullet, 10, true)
     this._keys = {
       'w': {
         pressed: false,
-        move: (p: Player) => {
+        evt: (p: Player) => {
           p._direction.y -= 1
-        },
-        stop: (p: Player) => {
-          p._direction.y = 0
         }
       },
       'a': {
         pressed: false,
-        move: (p: Player) => {
+        evt: (p: Player) => {
           p._direction.x -= 1
-        },
-        stop: (p: Player) => {
-          p._direction.x = 0
         }
       },
       's': {
         pressed: false,
-        move: (p: Player) => {
+        evt: (p: Player) => {
           p._direction.y += 1
-        },
-        stop: (p: Player) => {
-          p._direction.y = 0
         }
       },
       'd': {
         pressed: false,
-        move: (p: Player) => {
+        evt: (p: Player) => {
           p._direction.x += 1
-        },
-        stop: (p: Player) => {
-          p._direction.x = 0
         }
+      },
+      ' ': {
+        pressed: false,
+        evt: debouncedEmitBullet
       }
     }
   }
 
   public update(player: Player, delta: number): void {
-    const dir = player._direction.normalized;
-
+    let movementKeyPressed = false;
     for(const [key, value] of Object.entries(this._keys)) {
-      if(value.pressed){
-        if(dir.x !== 0 || dir.y !== 0) {
-          player._speed = Math.min(player._maxSpeed, player._speed * delta)
-        }
-        else if(dir.x === 0 && dir.y === 0) {
-          player._speed = Math.max(0, player._speed * delta)
-        }
-        console.log(player._speed)
-        this._keys[key].move(player)
-      }
-    };
+      if(value.pressed)  {
+        this._keys[key].evt(player);
 
-    player._entity.position.x += dir.x * player._speed * delta;
-    player._entity.position.y += dir.y * player._speed * delta
+        if(key === ' ') continue;
+        movementKeyPressed = true
+      }
+    }
+
+    const dir = player._direction.normalized;
+    
+    if(dir.x !== 0 || dir.y !== 0) {
+      player._speed = Math.min(player._maxSpeed, player._speed + (player._acceleration * delta))
+    }
+    if(!movementKeyPressed) {
+      player._speed = Math.max(0, player._speed - (player._deceleration * delta));
+    }
+    if(player._speed <= 0) player._direction.reset();
+
+    player._entity.position.x += (dir.x * player._speed) * delta;
+    player._entity.position.y += (dir.y * player._speed) * delta
   }
 
   public initListeners(): void {
     document.addEventListener('keydown', (evt: KeyboardEvent) => {
       evt.preventDefault();
-      if(this._keys[evt.key]){
-        this._keys[evt.key].pressed = true
-      }
+      if(this._keys[evt.key])this._keys[evt.key].pressed = true
     });
 
     document.addEventListener('keyup', (evt: KeyboardEvent) => {
       evt.preventDefault();
-      if(this._keys[evt.key]){
-        this._keys[evt.key].pressed = false;
-      }
+      if(this._keys[evt.key]) this._keys[evt.key].pressed = false
     })
   }
 
-  // public generateBulletFromPlayer(stage: any): void {
-  //   const bullets = this._player.bullets;
-  //   const playerPos = { x: this._player.entity.position.x, y: this._player.entity.position.y };
-  //   const bullet = new Bullet(playerPos);
-  //   bullet.create(stage);
-  //   bullets.push(bullet)
-  // }
+  private emitBullet(player: Player) {
+    const nextBullet = player.bulletPool.object;
+    const playerPos = player._entity.position;
+
+    if(!nextBullet) {
+      const nextBulletSprite = new Bullet(playerPos);
+      nextBulletSprite.create();
+      player._bullets.push(nextBulletSprite)
+    }
+    else {
+      nextBullet.reset(playerPos)
+    }  
+  }
 }

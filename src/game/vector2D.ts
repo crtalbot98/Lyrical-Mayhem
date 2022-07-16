@@ -29,6 +29,11 @@ export default class Vector2D {
         this._y *= scalar
     }
 
+    public reset(): void {
+        this._x = 0;
+        this._y = 0;
+    }
+
     get normalized(): SimpleVector2D {
         const mag = this.magnitude();
 
