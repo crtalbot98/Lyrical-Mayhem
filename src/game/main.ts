@@ -1,39 +1,37 @@
 import * as PIXI from "pixi.js";
-import Bullet from './entities/bullet';
-import Lyric from './entities/lyric';
 import Player from './entities/player';
 import LyricHandler from './objectHandlers/lyricHandler';
 import { detectCollisions } from './utils/collisions';
 import PlayerController from "./playerController";
 import { store } from '../stores/store';
 
-export default class Game {
+export const PixiApp: PIXI.Application = new PIXI.Application({ 
+    resizeTo: window,
+    backgroundColor: 0x1F2C28
+});
 
-    private _app: PIXI.Application;
+export class Game {
     private _player: Player;
+    private _playing: boolean;
     private _lyricHandler = new LyricHandler();
 
     constructor(){
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
-
-        this._app = new PIXI.Application({ 
-            resizeTo: window,
-            backgroundColor: 0x1F2C28
-        });
         this._player = new Player(new PlayerController());
+        store.subscribe(() => {
+            this._playing = store.getState().spotifyPlayer.playing
+        });
     }
 
-    public init(): void {
-        const stage = this._app.stage;
-        
-        document.body.appendChild(this._app.view);
+    public init(): void {        
+        document.body.appendChild(PixiApp.view);
 
-        this._player.create(stage);
+        this._player.create();
 
-        this._app.ticker.add((delta: number) => {
-            if(!store.getState().spotifyPlayer.playing) return;
-            this._lyricHandler.update(stage, delta);
-            this._player.update(delta, stage);
+        PixiApp.ticker.add((delta: number) => {
+            if(!this._playing) return;
+            this._lyricHandler.update(delta);
+            this._player.update(delta);
             // this.checkCollisions()
         });
     }

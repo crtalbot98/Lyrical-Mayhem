@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useCallback } from 'react'
 import { useSelector } from 'react-redux';
 import WebPlayer from './web-player/webPlayer';
-import Game from "../game/main";
+import { Game } from "../game/main";
 import { RootState } from '../stores/store';
 import Menu from './pause-menu/menu';
 import { WebPlaybackSDK } from "react-spotify-web-playback-sdk";
