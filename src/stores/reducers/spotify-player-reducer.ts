@@ -121,7 +121,7 @@ const spotifyPlayerReducer = createReducer(initialState, (builder) => {
     })
     .addCase(setPlayerError, (state, action: SetPlayerError) => {
 			state.playerDetails.error = action.payload.error;
-      state.song.lyricsType = LyricTypes.Empty
+      state.song.lyricsType = LyricTypes.None
 		})
 });
 
