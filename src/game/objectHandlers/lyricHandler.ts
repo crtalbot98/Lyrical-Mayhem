@@ -3,6 +3,7 @@ import { store } from '../../stores/store';
 import { songLyrics, lyricsWithTimestamp, LyricTypes } from '../../stores/reducers/spotify-player-reducer';
 import ObjectPool from './objectPool';
 import { SimpleVector2D } from 'src/types';
+import { PixiApp } from '../main';
 
 type SongData = {
 	id: string,
@@ -29,12 +30,17 @@ export default class LyricHandler{
 				if(this._currentSongData?.id !== storedSong.id) this._currentSongData = { ...storedSong }
 				this._currentSongData.timestamp = currentTime
 			});
+			(async() => {
+				const data = await fetch('./fake-lyrics.json');
+				const json = await data.json();
+				this._fakeLyrics = json
+			})();
 			this._objectPool = new ObjectPool();
 			this._lyrics = []
     }
 
-    public update(stage: any, delta: number): void {
-			const nextLyricText = (() => {
+    public update(delta: number): void {
+			const getNextLyric = () => {
 				switch(this._currentSongData.lyricsType) {
 					case LyricTypes.Timestamped:
 						return this.getLyricsWithTimestamp()
@@ -45,17 +51,17 @@ export default class LyricHandler{
 					default:
 						return null
 				}
-			})();
+			}
+			const nextLyricText = getNextLyric();
 
-      if(nextLyricText) this.addLyricToStage(stage, nextLyricText)
-
+      if(nextLyricText) this.addLyricToStage(nextLyricText)
 			if(this._lyrics.length < 1) return;
 
 			this._lyrics.forEach((lyric) => {
 				lyric.update(delta);
 				if(lyric._destroyed) {
 					this._objectPool.addToPool(lyric);
-					stage.removeChild(lyric._entity);
+					PixiApp.stage.removeChild(lyric._entity);
 				}
 			})
     }
@@ -86,14 +92,7 @@ export default class LyricHandler{
 		}
 
 		private getLyricsFromNone(): string {
-			if(this._fakeLyrics.length < 1) {
-				(async() => {
-					const data = await fetch('./fake-lyrics.json');
-					const json = await data.json();
-					this._fakeLyrics = json.data
-				})()
-			}
-			else if(this._currentSongData.length % this._currentSongData.timestamp === 0) {
+			if(this._currentSongData.length % this._currentSongData.timestamp === 0) {
 				const random = Math.floor(Math.random() * this._fakeLyrics.length-1);
 
 				if(this.objectWithLyricExists(this._fakeLyrics[random])) return;
@@ -101,19 +100,19 @@ export default class LyricHandler{
 			}
 		}
 
-    public addLyricToStage(stage: any, text: string): void {
+    public addLyricToStage(text: string): void {
 			const nextLyric = this._objectPool.object;
 			const nextPosition = (): SimpleVector2D => {
 				return {
-					x: 100,
-					y: window.innerWidth / 2
+					x: window.innerWidth / 2,
+					y: 50
 				}
 			}
 
 			if(!nextLyric) {
 				const nextLyricSprite = new Lyric(text, nextPosition());
-				this._lyrics.push(nextLyricSprite)
-				stage.addChild(nextLyricSprite._entity);
+				this._lyrics.push(nextLyricSprite);
+				nextLyricSprite.create()
 			}
 			else {
 				nextLyric.text = text;
@@ -122,8 +121,8 @@ export default class LyricHandler{
     }
 
 		private objectWithLyricExists(nextLyric: string): boolean {
-			const matchingLyrics = this._lyrics.findIndex(({text}) => {
-				return text === nextLyric
+			const matchingLyrics = this._lyrics.findIndex(({_text}) => {
+				return _text === nextLyric
 			});
 
 			if(matchingLyrics === -1) return false;

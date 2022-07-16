@@ -1,11 +1,13 @@
 import { Text } from "pixi.js";
 import { SimpleVector2D } from "src/types";
+import { PixiApp } from "../main";
+import { withinScreenBounds } from "../utils/collisions";
 
 export default class Lyric {
 
     private _fontStyles: {} = { fontFamily : 'Arial', fontSize: 24, fill : 0xDAF7DC, align : 'center' };
     private _speed: number;
-    private _text: string;
+    _text: string;
     _entity: Text;
     _destroyed: boolean;
 
@@ -18,8 +20,17 @@ export default class Lyric {
         this._entity.position.y = position.y
     }
 
+    public create(): void {
+        PixiApp.stage.addChild(this._entity)
+    }
+
     public update(delta: number): void {
-        if(this._destroyed) return;
+        if(this._destroyed) {
+            PixiApp.stage.removeChild(this._entity);
+            return
+        }
+
+        if(!withinScreenBounds(this._entity)) this._destroyed = true;
         this._entity.position.y += this._speed * delta;
     }
 
@@ -27,13 +38,5 @@ export default class Lyric {
         this._destroyed = false;
         this._entity.position.x = position.x;
         this._entity.position.y = position.y
-    }
-
-    get text(): string {
-        return this._text
-    }
-
-    set text(text: string) {
-        this._text = text
     }
 }

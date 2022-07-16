@@ -3,6 +3,7 @@ import Vector2D from '../vector2D';
 import Bullet from './bullet';
 import PlayerController from '../playerController';
 import ObjectPool from '../objectHandlers/objectPool';
+import { PixiApp } from '../main';
 
 export default class Player {
 
@@ -10,16 +11,20 @@ export default class Player {
   _direction: Vector2D;
   _maxSpeed: number;
   _speed: number;
-	private _bullets: Bullet[];
-	private _objectPool: ObjectPool;
+  _acceleration: number;
+  _deceleration: number;
+	_bullets: Bullet[];
+	private _bulletPool: ObjectPool;
 	private _controller: PlayerController;
 
   constructor(controller: PlayerController) {
     this._direction = new Vector2D();
     this._maxSpeed = 10;
     this._speed = 0;
+    this._acceleration = 0.50;
+    this._deceleration = 1;
     this._controller = controller;
-		this._objectPool = new ObjectPool();
+		this._bulletPool = new ObjectPool();
 		this._bullets = [];
     this._entity = new Sprite(Texture.from('player-ship.png'));
     this._entity.position.set(window.innerWidth / 2, window.innerHeight / 2);
@@ -28,39 +33,32 @@ export default class Player {
     this._entity.anchor.set(0.5)
 	}
 
-  public create(stage: any): void{
-    stage.addChild(this._entity);
+  public create(): void{
+    PixiApp.stage.addChild(this._entity);
     this._controller.initListeners()
   }
 
-  public update(delta: number, stage: any): void {
+  public update(delta: number): void {
     this._controller.update(this, delta);
-		const nextBullet = this._objectPool.object;
-
-		// if(!nextBullet) {
-		// 	const nextBulletSprite = new Bullet(this._entity.position);
-		// 	this._bullets.push(nextBulletSprite);
-		// 	stage.addChild(nextBulletSprite._entity)
-		// }
-		// else {
-		// 	nextBullet.reset(this._entity.position)
-		// }
 
 		if(this._bullets.length < 1) return;
 
-    this._bullets.forEach((bullet, index) => {
+    for(let i = this._bullets.length-1; i >= 0; i--) {
+      const bullet = this._bullets[i];
+      bullet.update(delta);
       if(bullet._destroyed) {
-				this._objectPool.addToPool(bullet);
-				this._bullets.splice(index, 1)
+				this._bulletPool.addToPool(bullet);
+				this._bullets.splice(i, 1)
 			}
-      else {
-				bullet.update(delta, stage)
-			}
-    })
+    }
   }
 
 	reset(): void {
 		this._entity.position.x = window.innerWidth / 2;
 		this._entity.position.y = window.innerHeight / 2
 	}
+
+  get bulletPool(): ObjectPool {
+    return this._bulletPool
+  }
 }

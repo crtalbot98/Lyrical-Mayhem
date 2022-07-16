@@ -1,6 +1,7 @@
 import { Texture, Sprite } from "pixi.js";
 import { SimpleVector2D } from "src/types";
 import { withinScreenBounds } from "../utils/collisions";
+import { PixiApp } from "../main";
 
 export default class Bullet {
 
@@ -9,7 +10,7 @@ export default class Bullet {
     _destroyed: boolean;
 
     constructor(initialPosition: SimpleVector2D) {
-        this._speed = 10;
+        this._speed = 15;
         this._destroyed = false;
         this._entity = new Sprite(Texture.from('bullet.png'));
         this._entity.width = 20;
@@ -18,12 +19,15 @@ export default class Bullet {
         this._entity.position.y = initialPosition.y;
     }
 
-    public create(stage: any): void{
-        stage.addChild(this._entity);
+    public create(): void{
+        PixiApp.stage.addChild(this._entity);
     }
 
-    public update(delta: number, stage: any): void {
-        if(this._destroyed) stage.removeChild(this._entity);
+    public update(delta: number): void {
+        if(this._destroyed || !withinScreenBounds(this._entity)) {
+            PixiApp.stage.removeChild(this._entity);
+            return
+        }
 
         if(!withinScreenBounds(this._entity)) this._destroyed = true;
         else this._entity.position.y -= this._speed * delta
