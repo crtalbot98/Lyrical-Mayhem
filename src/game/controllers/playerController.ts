@@ -1,7 +1,5 @@
-import Player from "./entities/player";
-import Bullet from "./entities/bullet";
-import { PixiApp } from "./main";
-import { debounce } from "./utils/time";
+import Player from "../entities/player";
+import { debounce } from "../utils/debounce";
 
 export type ControllerKeys = {
   [key: string]: ControllerHandler
@@ -66,13 +64,13 @@ export default class PlayerController{
     if(dir.x !== 0 || dir.y !== 0) {
       player._speed = Math.min(player._maxSpeed, player._speed + (player._acceleration * delta))
     }
+
     if(!movementKeyPressed) {
       player._speed = Math.max(0, player._speed - (player._deceleration * delta));
     }
-    if(player._speed <= 0) player._direction.reset();
+    else if(player._speed <= 0) player._direction.reset();
 
-    player._entity.position.x += (dir.x * player._speed) * delta;
-    player._entity.position.y += (dir.y * player._speed) * delta
+    player._entityMover.move(player, delta)
   }
 
   public initListeners(): void {
@@ -88,16 +86,10 @@ export default class PlayerController{
   }
 
   private emitBullet(player: Player) {
-    const nextBullet = player.bulletPool.object;
-    const playerPos = player._entity.position;
+    const nextBulletEntity = player._bullets.firstObject;
+    if(!nextBulletEntity) return;
 
-    if(!nextBullet) {
-      const nextBulletSprite = new Bullet(playerPos);
-      nextBulletSprite.create();
-      player._bullets.push(nextBulletSprite)
-    }
-    else {
-      nextBullet.reset(playerPos)
-    }  
+    const playerPos = player._entity.position;
+    nextBulletEntity.create(playerPos)
   }
 }

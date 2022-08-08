@@ -5,9 +5,9 @@ export default class Vector2D {
     private _x: number;
     private _y: number;
 
-    constructor() {
-        this._x = 0;
-        this._y = 0;
+    constructor(x?: number, y?: number) {
+        this._x = x || 0;
+        this._y = y || 0;
     }
 
     public magnitude(): number {
