@@ -1,27 +1,36 @@
 import { GenericObject } from "src/types";
+import Bullet from '../entities/bullet';
+import { Entity } from "../entities/entity";
+import Lyric from '../entities/lyric';
+
+type Constructor<T> = new () => T;
 
 export default class ObjectPool{
 
-  private _pool: GenericObject[];
+  private _pool: Entity[];
   private _objectMax: number;
+  private _objectType: Constructor<Entity>;
 
-  constructor(objectMax: number = 50) {
+  constructor(type: Constructor<Entity>, objectMax: number = 50) {
     this._pool = [];
-    this._objectMax = objectMax
+    this._objectMax = objectMax;
+    this._objectType = type;
   }
 
-  public addToPool(obj: GenericObject): GenericObject {
-    if(this._pool.length > this._objectMax) return;
-
-    this._pool.push(obj);
-    return this._pool[this._pool.length-1];
+  public empty() {
+    this._pool = [];
   }
 
-  get object(): GenericObject | null {
-    return this._pool.pop() || null;
+  get firstObject(): Entity {
+    const firstDestroyedObj = this._pool.findIndex(elm => elm._destroyed);
+    if(firstDestroyedObj !== -1) return this._pool[firstDestroyedObj];
+    
+    if(this._pool.length >= this._objectMax) return;
+    const newPoolLength = this._pool.push(new this._objectType());
+    return this._pool[newPoolLength-1]
   }
 
-  get pool(): GenericObject[] {
+  get pool(): Entity[] {
     return this._pool
   }
 }
