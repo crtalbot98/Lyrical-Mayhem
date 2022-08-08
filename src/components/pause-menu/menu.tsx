@@ -16,7 +16,7 @@ const Menu: CompoundedMenu = ({children}) => {
 	return <MenuContext.Provider 
 		value={{ trackList, setTrackList, playlists, setPlaylists } as MenuContextType}
 	>
-		<FullScreenModal classes={'bg-lightGray flex flex-col lg:flex-row justify-start p-10'}>
+		<FullScreenModal classes={'bg-lightGray flex flex-col 2xl:flex-row justify-start p-10'}>
 			<h1 className='text-orange'>Lyrical Mayhem</h1>
 			{children}
 		</FullScreenModal>
