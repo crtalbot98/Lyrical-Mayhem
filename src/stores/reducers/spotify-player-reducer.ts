@@ -99,11 +99,14 @@ const spotifyPlayerReducer = createReducer(initialState, (builder) => {
       state.playerDetails.error = '';
       state.song.lyrics = action.payload.lyrics;
 
-      if(action.payload.lyrics.length < 1) state.song.lyricsType = LyricTypes.None
-      else state.song.lyricsType = (action.payload.lyrics[0] as lyricsWithTimestamp)?.seconds ? 
+      if(action.payload.lyrics.length < 1) {
+        state.song.lyricsType = LyricTypes.None
+      }
+      else {
+        state.song.lyricsType = (action.payload.lyrics[0] as lyricsWithTimestamp)?.seconds ? 
         LyricTypes.Timestamped : 
         LyricTypes.NoTimestamp   
-
+      }
       state.playing = true
 		})
     .addCase(setCurrentTime, (state, action: SetCurrentTime) => {
