@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import Player from './entities/player';
 import LyricHandler from './objectHandlers/lyricHandler';
 import { detectCollisions } from './utils/collisions';
-import PlayerController from "./playerController";
+import PlayerController from "./controllers/playerController";
 import { store } from '../stores/store';
 
 export const PixiApp: PIXI.Application = new PIXI.Application({ 
@@ -32,24 +32,19 @@ export class Game {
             if(!this._playing) return;
             this._lyricHandler.update(delta);
             this._player.update(delta);
-            // this.checkCollisions()
+            this.checkCollisions()
         });
     }
 
-    // private checkCollisions(): void {
-    //     this._lyricHandler.objects.forEach((lyric: Lyric) => {
-    //         this._player.bullets.forEach((bullet: Bullet) => {
-    //             if(lyric.destroyed && bullet.destroyed) return;
-
-    //             if(detectCollisions(bullet.entity, lyric.entity)){
-    //                 lyric.destroyed = true;
-    //                 bullet.destroyed = true
-    //             }
-    //         })
-    //     });
-    // }
-
-    get lyricHandler(): LyricHandler {
-        return this._lyricHandler
+    private checkCollisions(): void {
+        this._lyricHandler.lyrics.forEach((lyric) => {
+            this._player._bullets.pool.forEach((bullet) => {
+                if((!lyric._destroyed || !bullet._destroyed) && detectCollisions(bullet._entity, lyric._entity)){
+                    lyric._destroyed = true;
+                    bullet._destroyed = true;
+                    PixiApp.stage.removeChild(bullet._entity, lyric._entity)
+                }
+            })
+        });
     }
 }
