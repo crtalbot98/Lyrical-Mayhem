@@ -5,6 +5,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 @layer base {
+	html {
+		@apply overflow-hidden
+	}
+
 	h1 {
 		@apply text-6xl font-semibold antialiased tracking-wide;
 	}
