@@ -1,5 +1,4 @@
 import React, { ReactNode, FC } from 'react'
-import { store } from '../../stores/store'
 
 type FullScreenModalProps = {
 	children: ReactNode,
@@ -11,9 +10,9 @@ const FullScreenModal: FC<FullScreenModalProps> = ({children, classes}) => {
   const [open, setOpen] = React.useState(false); 
 
   return <div 
-          className={`bg-gray w-full h-full absolute ${classes}`}
-          onClick={() => { setOpen(false) }}
-         >
+    className={`bg-gray w-full absolute ${classes}`}
+    onClick={() => { setOpen(false) }}
+   >
     {children}
   </div>
 };
