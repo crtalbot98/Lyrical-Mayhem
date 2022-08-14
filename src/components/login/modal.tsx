@@ -12,7 +12,7 @@ const LoginModal: React.FC = () => {
     dispatch({ type: 'auth/setLoggedIn' });
   }, []);
 
-	return <FullScreenModal classes={'flex justify-center items-center px-2 md:px-10'}>
+	return <FullScreenModal classes={'flex justify-center items-center px-2 md:px-10 h-full'}>
 	  <div className='bg-lightGray modal'>
 	    <h1 
 		  	className='text-orange'
