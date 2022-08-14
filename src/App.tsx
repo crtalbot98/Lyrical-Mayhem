@@ -6,12 +6,10 @@ import Scene from './components/scene';
 import { RootState } from './stores/store';
 
 const App: React.FC = () => {
-
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 
-  return <div className="m-0 p-0">
-    { loggedIn ? <Scene/> : <LoginModal/> }
-  </div>
+  if(!loggedIn) return <LoginModal/>
+  return <Scene/>
 };
 
 export default App;
