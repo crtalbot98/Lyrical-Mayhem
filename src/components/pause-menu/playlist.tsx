@@ -1,72 +1,55 @@
-import React, { ReactNode, useEffect, useState } from 'react'
-import { GenericObject } from '../../types';
-import { useMenuContext } from './context';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../stores/store';
+import { useQuery } from '@tanstack/react-query';
+import LoadingSpinner from '../loadingSpinner';
+import SelectedPlayList from './selectedPlaylist';
 
-const PlayList: React.FC = () => {
-	const context = useMenuContext();
-	const [currentPlaylistId, setCurrentPlaylistId] = useState('');
+export const getPlaylistById = (playlists: SpotifyApi.PlaylistObjectFull[], id: string): SpotifyApi.PlaylistObjectFull => {
+	if(!id) return null;
+	const index = playlists.findIndex((playlist) => id === playlist.id);
+	if(index === -1) return null;
+	return playlists[index];
+}
+
+export const Playlist: React.FC<{ selectedPlaylist: { trackListUrl: string; id: string; }, selectPlaylist: Dispatch<SetStateAction<{ trackListUrl: string; id: string; }>> }> = ({ selectedPlaylist, selectPlaylist }) => {
 	const aToken = useSelector((state: RootState) => state.auth.accessToken);
+	const { data, error, isError, isLoading } = useQuery<SpotifyApi.PagingObject<SpotifyApi.PlaylistObjectFull>, Error>(
+		['playlists'], 
+		async() => {
+			const res = await fetch('https://api.spotify.com/v1/me/playlists', {
+				headers: new Headers({
+					'Authorization': `Bearer ${aToken}`
+				})
+			});
 
-	const renderCurrentPlaylist = (): ReactNode | null => {
-		const index = context.playlists.findIndex((playlist: GenericObject) => {
-			return currentPlaylistId === playlist.id
-		});
+			if(!res.ok) throw new Error('Something happened with the Spotify Api!');
+			return res.json()
+	});
+	const selectedPlaylistData = getPlaylistById(data?.items, selectedPlaylist.id);
 
-		if(index === -1) return null;
-
-		const playlist = context.playlists[index];
-
-		return <>
-			<button onClick={() => { setCurrentPlaylistId('') }}>
-				<img className='text-lightText' src='./arrow-narrow-left.svg' alt="Return to playlist selection" width="24" height="24"/>
-			</button>
-			<img className='m-auto rounded-sm h-full' height='250' width='250' src={playlist.images[0].url} alt={`${playlist.name} image`} />
-			<h2 className='text-lightText w-full text-center self-center'>
-				{playlist.name}
-			</h2>
-		</>
-	}
-
-	const getPlaylists = async() => {
-		const playlists = await fetch('https://api.spotify.com/v1/me/playlists', {
-			headers: new Headers({
-				'Authorization': `Bearer ${aToken}`
-			})
-		});
-		const playlistJson = await playlists.json();
-		context.setPlaylists(playlistJson.items)
-	}
-
-	const getTracks = async(url: string) => {
-		const playlists = await fetch(url, {
-			headers: new Headers({
-				'Authorization': `Bearer ${aToken}`
-			})
-		});
-		const tracksJson = await playlists.json();
-		context.setTrackList(tracksJson.items)
-	}
-
-	useEffect(() => {
-		getPlaylists()
-	}, [])
-
-	const playlistsItems = context.playlists?.map((playlist: GenericObject) => {
-		return <li key={playlist.id} className='flex justify-start break-all' onClick={() => { 
-			setCurrentPlaylistId(playlist.id);
-			getTracks(playlist.tracks.href) 
-		}}>
-			<h2 className='text-lightText'>
-				{playlist.name}
-			</h2>
+	const playlistsItems = data?.items.map((playlist) => {
+		return <li 
+			key={playlist.id} 
+			className='flex justify-start break-all text-3xl text-lightText cursor-pointer decoration-orange hover:underline' 
+			onClick={() => selectPlaylist({ id: playlist.id, trackListUrl: playlist.tracks.href }) }
+		>
+			{playlist.name}
 		</li>
 	});
 
-  return <ul className='py-4 h-96 overflow-y-auto space-y-2 flex flex-col justify-start'>
-		{ currentPlaylistId ? renderCurrentPlaylist() : playlistsItems }
-	</ul>
-};
+	if(isError) return <p>{ 'Something went wrong.' + error }</p>
+	if(isLoading) return <LoadingSpinner isLoading={isLoading}/>
 
-export default PlayList;
+  return <div className='lg:max-w-4xl flex flex-col justify-between h-full'>
+		<ul className={'overflow-y-auto space-y-2 flex flex-col justify-start'}>
+			{ playlistsItems }
+		</ul>
+		{ selectedPlaylist.id &&
+			<SelectedPlayList 
+				playlist={selectedPlaylistData} 
+				reset={() => { selectPlaylist({ id: '', trackListUrl: '' }) }}
+			/>
+		}
+	</div>
+}

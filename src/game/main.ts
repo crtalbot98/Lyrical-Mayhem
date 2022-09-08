@@ -13,11 +13,12 @@ export const PixiApp: PIXI.Application = new PIXI.Application({
 export class Game {
     private _player: Player;
     private _playing: boolean;
-    private _lyricHandler = new LyricHandler();
+    private _lyricHandler: LyricHandler;
 
     constructor(){
         PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
         this._player = new Player(new PlayerController());
+        this._lyricHandler = new LyricHandler();
         store.subscribe(() => {
             this._playing = store.getState().spotifyPlayer.playing
         });
@@ -36,15 +37,34 @@ export class Game {
         });
     }
 
+    public destroyStage(): void {
+        PixiApp.destroy(true);
+        PixiApp.stage = null
+    }
+
     private checkCollisions(): void {
-        this._lyricHandler.lyrics.forEach((lyric) => {
-            this._player._bullets.pool.forEach((bullet) => {
-                if((!lyric._destroyed || !bullet._destroyed) && detectCollisions(bullet._entity, lyric._entity)){
-                    lyric._destroyed = true;
+        for(let i = 0; i < this._lyricHandler.lyrics.length; i++) {
+            const lyric = this._lyricHandler.lyrics[i];
+
+            if(lyric._destroyed) continue;
+
+            for(let j = 0; j < this._player._bullets.pool.length; j++) {
+                const bullet = this._player._bullets.pool[j];
+
+                if(bullet._destroyed) continue;
+
+                if(detectCollisions(bullet._entity, lyric._entity)){
+                    lyric._health.decrement();
                     bullet._destroyed = true;
-                    PixiApp.stage.removeChild(bullet._entity, lyric._entity)
+                    PixiApp.stage.removeChild(bullet._entity)
                 }
-            })
-        });
+            }
+
+            if(detectCollisions(this._player._entity, lyric._entity)) {
+                lyric._destroyed = true;
+                this._player._health.decrement();
+                PixiApp.stage.removeChild(lyric._entity);
+            }
+        }
     }
 }

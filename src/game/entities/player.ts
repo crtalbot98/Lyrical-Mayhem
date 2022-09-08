@@ -1,13 +1,14 @@
 import { Texture, Sprite } from 'pixi.js';
-import Vector2D from '../vector2D';
+import { Vector2D } from '../vector2D';
 import Bullet from './bullet';
 import PlayerController from '../controllers/playerController';
 import ObjectPool from '../objectHandlers/objectPool';
 import { PixiApp } from '../main';
-import { MoveableEntity } from './entity';
-import EntityMover from '../controllers/entityMover';
+import { Entity, Moveable, Health } from './entity';
+import EntityMover from '../controllers/entityMoveable';
+import EntityHealth from '../controllers/entityHealth';
 
-export default class Player implements MoveableEntity {
+export default class Player implements Entity, Moveable, Health {
 
   _entity: Sprite;
   _direction: Vector2D;
@@ -18,6 +19,7 @@ export default class Player implements MoveableEntity {
   _entityMover: EntityMover;
 	_bullets: ObjectPool;
 	private _controller: PlayerController;
+  _health: EntityHealth;
 
   constructor(controller: PlayerController) {
     this._direction = new Vector2D();
@@ -32,7 +34,8 @@ export default class Player implements MoveableEntity {
     this._entity.position.set(window.innerWidth / 2, window.innerHeight / 2);
     this._entity.width = 55;
     this._entity.height = 55;
-    this._entity.anchor.set(0.5)
+    this._entity.anchor.set(0.5);
+    this._health = new EntityHealth(3);
 	}
 
   public create(): void{
@@ -43,16 +46,18 @@ export default class Player implements MoveableEntity {
   public update(delta: number): void {
     this._controller.update(this, delta);
 
-		if(this._bullets.pool.length < 1) return;
+    if(this._health.isDepleted()) this.reset();
 
     for(let i = 0; i < this._bullets.pool.length; i++) {
       const bullet = this._bullets.pool[i];
-      if(bullet._destroyed)  continue;
+      if(bullet._destroyed) continue;
       bullet.update(delta);
     }
   }
 
-	reset(): void {
+	public reset(): void {
+    this._health.resetHealth(3);
+
 		this._entity.position.x = window.innerWidth / 2;
 		this._entity.position.y = window.innerHeight / 2
 	}

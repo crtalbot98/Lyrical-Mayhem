@@ -13,6 +13,6 @@
       "esModuleInterop": true,
       "module": "commonjs",
     },
-    "include": ["src/**/*",],
+    "include": ["./src/**/*", "./node_modules/@types/spotify-api/index.d.ts"],
     "exclude": ["**/*.spec.ts"]
   }

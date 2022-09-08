@@ -1,4 +1,5 @@
-import { SimpleVector2D, Size } from "src/types";
+import { SimpleVector2D } from "../vector2D";
+import { Size } from "./collisions";
 
 export function genPosition(): SimpleVector2D {
     return {

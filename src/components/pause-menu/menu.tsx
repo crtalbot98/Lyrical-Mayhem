@@ -1,29 +1,26 @@
-import React, { useState, memo } from 'react'
+import React, { useState } from 'react'
 import FullScreenModal from '../modals/fullscreenModal';
-import { MenuContext, MenuContextType } from './context';
-import Playlist from './playlist';
+import { Playlist } from './playlist';
 import Tracklist from './tracklist';
+import Sidebar from './sidebar';
 
-export interface CompoundedMenu extends React.FC{
-	PlayList: typeof Playlist,
-	TrackList: typeof Tracklist
-}
+const Menu: React.FC = () => {
+	const [selectedData, setSelectedData] = useState({
+		trackListUrl: '',
+		id: ''
+	});
 
-const Menu: CompoundedMenu = ({children}) => {
-	const [trackList, setTrackList] = useState([]);
-	const [playlists, setPlaylists] = useState([]);
-
-	return <MenuContext.Provider 
-		value={{ trackList, setTrackList, playlists, setPlaylists } as MenuContextType}
-	>
-		<FullScreenModal classes={'bg-lightGray flex flex-col 2xl:flex-row justify-start p-10'}>
+	return <FullScreenModal 
+			classes={'bg-jungle-300/60 backdrop-blur-sm inline-grid grid-cols[auto auto] h-7/8'}
+		>
+		<Sidebar>
 			<h1 className='text-orange'>Lyrical Mayhem</h1>
-			{children}
-		</FullScreenModal>
-	</MenuContext.Provider>
+			<Playlist selectedPlaylist={selectedData} selectPlaylist={setSelectedData}/>
+		</Sidebar>
+		<div className='col-start-1 col-span-2 lg:col-start-2 lg:max-w-7xl overflow-y-auto h-full pb-6'>
+			<Tracklist selectedPlaylist={selectedData}/>
+		</div>
+	</FullScreenModal>
 };
-
-Menu.PlayList = memo(Playlist);
-Menu.TrackList = memo(Tracklist);
 
 export default Menu;

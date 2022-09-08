@@ -1,3 +1,8 @@
+export interface Size {
+    h: number;
+    w: number;
+  }
+
 export function detectCollisions(a: any, b: any): boolean {
     const aBounds = a.getBounds();
     const bBounds = b.getBounds();

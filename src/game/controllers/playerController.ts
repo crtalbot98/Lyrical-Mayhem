@@ -15,7 +15,7 @@ export default class PlayerController{
   private _keys: ControllerKeys;
 
   constructor() {
-    const debouncedEmitBullet = debounce(this.emitBullet, 10, true)
+    const debouncedEmitBullet = debounce(this.emitBullet, 10, true);
     this._keys = {
       'w': {
         pressed: false,
@@ -66,9 +66,11 @@ export default class PlayerController{
     }
 
     if(!movementKeyPressed) {
-      player._speed = Math.max(0, player._speed - (player._deceleration * delta));
+      player._speed = Math.max(0, player._speed - (player._deceleration * delta))
     }
-    else if(player._speed <= 0) player._direction.reset();
+    else if(player._speed < 1) {
+      player._direction.reset()
+    }
 
     player._entityMover.move(player, delta)
   }

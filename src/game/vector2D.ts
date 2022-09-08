@@ -1,6 +1,9 @@
-import { SimpleVector2D } from "src/types";
+export interface SimpleVector2D {
+    x: number;
+    y: number;
+  }
 
-export default class Vector2D {
+export class Vector2D {
     
     private _x: number;
     private _y: number;
