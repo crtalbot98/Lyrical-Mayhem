@@ -1,62 +1,55 @@
-import React, { useEffect } from 'react'
-import { GenericObject } from '../../types';
-import { useMenuContext } from './menu';
+import React, { Dispatch, SetStateAction } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../stores/store';
+import { useQuery } from '@tanstack/react-query';
+import LoadingSpinner from '../loadingSpinner';
+import SelectedPlayList from './selectedPlaylist';
 
-export const getPlaylistById = (playlists: any[], id: string): any => {
+export const getPlaylistById = (playlists: SpotifyApi.PlaylistObjectFull[], id: string): SpotifyApi.PlaylistObjectFull => {
 	if(!id) return null;
-
-	const index = playlists.findIndex((playlist: GenericObject) => {
-		return id === playlist.id
-	});
-
+	const index = playlists.findIndex((playlist) => id === playlist.id);
 	if(index === -1) return null;
 	return playlists[index];
 }
 
-export const PlayList: React.FC = () => {
-	const context = useMenuContext();
+export const Playlist: React.FC<{ selectedPlaylist: { trackListUrl: string; id: string; }, selectPlaylist: Dispatch<SetStateAction<{ trackListUrl: string; id: string; }>> }> = ({ selectedPlaylist, selectPlaylist }) => {
 	const aToken = useSelector((state: RootState) => state.auth.accessToken);
-	const selectedPlaylist = getPlaylistById(context.playlists, context.selectedPlaylistId);
+	const { data, error, isError, isLoading } = useQuery<SpotifyApi.PagingObject<SpotifyApi.PlaylistObjectFull>, Error>(
+		['playlists'], 
+		async() => {
+			const res = await fetch('https://api.spotify.com/v1/me/playlists', {
+				headers: new Headers({
+					'Authorization': `Bearer ${aToken}`
+				})
+			});
 
-	const getPlaylists = async() => {
-		const playlists = await fetch('https://api.spotify.com/v1/me/playlists', {
-			headers: new Headers({
-				'Authorization': `Bearer ${aToken}`
-			})
-		});
-		const playlistJson = await playlists.json();
-		context.setPlaylists(playlistJson.items)
-	}
+			if(!res.ok) throw new Error('Something happened with the Spotify Api!');
+			return res.json()
+	});
+	const selectedPlaylistData = getPlaylistById(data?.items, selectedPlaylist.id);
 
-	useEffect(() => {
-		getPlaylists()
-	}, [])
-
-	const playlistsItems = context.playlists.map((playlist: GenericObject) => {
-		return <li key={playlist.id} className='flex justify-start break-all' onClick={() => { 
-			context.setSelectedPlaylistId(playlist.id) 
-		}}>
-			<h2 className='text-lightText'>
-				{playlist.name}
-			</h2>
+	const playlistsItems = data?.items.map((playlist) => {
+		return <li 
+			key={playlist.id} 
+			className='flex justify-start break-all text-3xl text-lightText cursor-pointer decoration-orange hover:underline' 
+			onClick={() => selectPlaylist({ id: playlist.id, trackListUrl: playlist.tracks.href }) }
+		>
+			{playlist.name}
 		</li>
 	});
 
-	if(selectedPlaylist)  {
-		return <div className={'py-4 h-96 flex flex-col justify-between animate-slideIn'}>
-			<button onClick={() => { context.setSelectedPlaylistId('') }}>
-				<img className='text-lightText' src='./arrow-narrow-left.svg' alt="Return to playlist selection" width="24" height="24"/>
-			</button>
-			<img className='mx-auto rounded-sm max-h-48 shadow-lg' src={selectedPlaylist.images[0].url} alt={`${selectedPlaylist.name} image`} />
-			<h2 className='text-lightText w-full text-center self-center'>
-				{selectedPlaylist.name}
-			</h2>
-		</div>
-	}
+	if(isError) return <p>{ 'Something went wrong.' + error }</p>
+	if(isLoading) return <LoadingSpinner isLoading={isLoading}/>
 
-  return <ul className={'py-4 max-h-96 overflow-y-auto space-y-2 flex flex-col justify-start overflow-y-auto animate-slideIn'}>
-		{ playlistsItems }
-	</ul>
+  return <div className='lg:max-w-4xl flex flex-col justify-between h-full'>
+		<ul className={'overflow-y-auto space-y-2 flex flex-col justify-start'}>
+			{ playlistsItems }
+		</ul>
+		{ selectedPlaylist.id &&
+			<SelectedPlayList 
+				playlist={selectedPlaylistData} 
+				reset={() => { selectPlaylist({ id: '', trackListUrl: '' }) }}
+			/>
+		}
+	</div>
 }

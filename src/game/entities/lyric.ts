@@ -1,12 +1,12 @@
 import { Text, TextMetrics, TextStyle } from "pixi.js";
-import { SimpleVector2D } from "src/types";
-import EntityMover from "../controllers/entityMover";
+import EntityHealth from "../controllers/entityHealth";
+import EntityMover from "../controllers/entityMoveable";
 import { PixiApp } from "../main";
 import { withinScreenBounds } from "../utils/collisions";
-import Vector2D from "../vector2D";
-import { Entity, MoveableEntity } from "./entity";
+import { SimpleVector2D, Vector2D} from "../vector2D";
+import { Entity, Health, Moveable } from "./entity";
 
-export default class Lyric implements MoveableEntity {
+export default class Lyric implements Entity, Moveable, Health {
 
     private _fontStyles: TextStyle;
     _metrics: TextMetrics;
@@ -15,6 +15,7 @@ export default class Lyric implements MoveableEntity {
     _destroyed: boolean;
     _direction: Vector2D;
     _entityMover: EntityMover;
+    _health: EntityHealth;
 
     constructor() {
         this._speed = 2;
@@ -27,6 +28,7 @@ export default class Lyric implements MoveableEntity {
         });
         this._entity = new Text('', this._fontStyles);
         this._direction = new Vector2D(0,1);
+        this._health = new EntityHealth(5);
     }
 
     public create(text: string, position: SimpleVector2D): void {
@@ -39,7 +41,7 @@ export default class Lyric implements MoveableEntity {
     }
 
     public update(delta: number): void {
-        if(this._destroyed || !withinScreenBounds(this._entity)) {
+        if(this._destroyed || !withinScreenBounds(this._entity) || this._health.isDepleted()) {
             this._destroyed = true;
             PixiApp.stage.removeChild(this._entity)
         }

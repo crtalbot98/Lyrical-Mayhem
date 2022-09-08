@@ -10,7 +10,7 @@ const FullScreenModal: FC<FullScreenModalProps> = ({children, classes}) => {
   const [open, setOpen] = React.useState(false); 
 
   return <div 
-    className={`bg-gray w-full absolute ${classes}`}
+    className={`w-full absolute ${classes}`}
     onClick={() => { setOpen(false) }}
    >
     {children}

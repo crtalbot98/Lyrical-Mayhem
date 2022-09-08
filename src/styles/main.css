@@ -6,7 +6,7 @@
 
 @layer base {
 	html {
-		@apply overflow-hidden
+		@apply overflow-hidden bg-jungle-100;
 	}
 
 	h1 {

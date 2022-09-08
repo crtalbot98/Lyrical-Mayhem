@@ -1,8 +1,8 @@
-import { MoveableEntity } from "../entities/entity";
+import { Entity, Moveable } from "../entities/entity";
 
-export default class EntityMover {
+export default class EntityMoveable {
 
-  move(entity: MoveableEntity, delta: number): void {
+  move(entity: (Entity & Moveable), delta: number): void {
     const dir = entity._direction.normalized;
 
     entity._entity.position.x += (dir.x * entity._speed) * delta;

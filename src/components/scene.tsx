@@ -17,6 +17,9 @@ const Scene: React.FC = () => {
 
 		game.current = new Game();
 		game.current.init()
+		// Possibly remove redux and add basic event emitter for game data (lyricHandler.updateState()...?)
+
+		return () => game.current.destroyStage()
 	}, []);
   
   return <>
@@ -28,13 +31,9 @@ const Scene: React.FC = () => {
     >
       <WebPlayer/>
 			{
-			!playing ? 
-				<Menu>
-					<Menu.PlayList/>
-					<Menu.TrackList/>
-				</Menu> 
-			: null
-		}
+			!playing && 
+				<Menu/>
+			}
     </WebPlaybackSDK>
   </>;
 };

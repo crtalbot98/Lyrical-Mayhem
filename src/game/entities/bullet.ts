@@ -1,12 +1,11 @@
 import { Texture, Sprite } from "pixi.js";
-import { SimpleVector2D } from "src/types";
 import { withinScreenBounds } from "../utils/collisions";
 import { PixiApp } from "../main";
-import { MoveableEntity } from "./entity";
-import Vector2D from "../vector2D";
-import EntityMover from "../controllers/entityMover";
+import { Entity, Moveable } from "./entity";
+import { SimpleVector2D, Vector2D } from "../vector2D";
+import EntityMover from "../controllers/entityMoveable";
 
-export default class Bullet implements MoveableEntity {
+export default class Bullet implements Entity, Moveable {
 
     _speed: number;
     _entity: Sprite;
@@ -31,12 +30,9 @@ export default class Bullet implements MoveableEntity {
     }
 
     public update(delta: number): void {
-        if(this._destroyed) {
-            PixiApp.stage.removeChild(this._entity)
-        }
-        else if(!withinScreenBounds(this._entity)) {
+        if(this._destroyed || !withinScreenBounds(this._entity)) {
             this._destroyed = true;
-            PixiApp.stage.removeChild(this._entity)
+            PixiApp.stage.removeChild(this._entity);
         }
         else this._entityMover.move(this, delta)
     }

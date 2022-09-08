@@ -1,13 +1,12 @@
-import { GenericObject } from "src/types";
-import Bullet from '../entities/bullet';
 import { Entity } from "../entities/entity";
 import Lyric from '../entities/lyric';
+import Bullet from '../entities/bullet';
 
 type Constructor<T> = new () => T;
 
 export default class ObjectPool{
 
-  private _pool: Entity[];
+  private _pool: (Entity | Lyric | Bullet)[];
   private _objectMax: number;
   private _objectType: Constructor<Entity>;
 
@@ -30,7 +29,7 @@ export default class ObjectPool{
     return this._pool[newPoolLength-1]
   }
 
-  get pool(): Entity[] {
+  get pool(): (Entity | Lyric | Bullet)[] {
     return this._pool
   }
 }

@@ -1,27 +1,12 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import FullScreenModal from '../modals/fullscreenModal';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from 'src/stores/store';
 
 const LoginModal: React.FC = () => {
-	
-	const dispatch = useDispatch();
-  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 
-  useEffect(() => {
-    dispatch({ type: 'auth/setLoggedIn' });
-  }, []);
-
-	return <FullScreenModal classes={'flex justify-center items-center px-2 md:px-10 h-full'}>
+	return <FullScreenModal classes={'bg-jungle-100 flex justify-center items-center px-2 md:px-10 h-full'}>
 	  <div className='bg-lightGray modal'>
-	    <h1 
-		  	className='text-orange'
-			>
-				Welcome to Lyrical Mayhem
-			</h1>
-	    <p 
-				className='text-white w-5/6'
-			>
+	    <h1 className='text-orange'>Welcome to Lyrical Mayhem</h1>
+	    <p className='text-white w-5/6'>
 				To use this application you need to log into your Spotify account and get an access token.
 			</p>
 	    <a 

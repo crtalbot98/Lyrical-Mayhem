@@ -2,7 +2,6 @@ import Lyric from '../entities/lyric';
 import { store } from '../../stores/store';
 import { lyricsWithTimestamp, LyricTypes, Song } from '../../stores/reducers/spotify-player-reducer';
 import ObjectPool from './objectPool';
-import { Entity } from '../entities/entity';
 
 export default class LyricHandler{
 
@@ -34,6 +33,7 @@ export default class LyricHandler{
     }
 
 		private getLyricsWithTimestamp(song: Song, currentTime: number): string {
+			console.log(this._lyrics)
 			const lyrics = song.lyrics;
 			const nextIndex = lyrics.findIndex((elm) => {
 				return Number((elm as lyricsWithTimestamp).seconds) === currentTime
@@ -98,7 +98,7 @@ export default class LyricHandler{
 			nextLyricEntity.create(nextLyricText, nextPosition);
 		}
 
-		get lyrics(): Entity[] {
-			return this._lyrics.pool
+		get lyrics(): Lyric[] {
+			return (this._lyrics.pool as Lyric[])
 		}
 }
